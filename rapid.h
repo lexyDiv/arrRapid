@@ -62,6 +62,7 @@ inline void rapid<T>::push(T item)
 template<typename T>
 inline void rapid<T>::unshift(T item)
 {
+	cout << " hi " << endl;
 }
 
 
