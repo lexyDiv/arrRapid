@@ -8,7 +8,9 @@ class rapid
 {
 public:
 	rapid();
-	T* pop();
+	~rapid();
+	T pop();
+	T shift();
 	void backForce(int force);
 	void frontForce(int force);
 	void push(T item);
@@ -34,12 +36,27 @@ inline rapid<T>::rapid()
 }
 
 template <typename T>
-inline T *rapid<T>::pop()
+inline rapid<T>::~rapid()
+{
+	delete this->arr;
+}
+
+template <typename T>
+inline T rapid<T>::pop()
 {
 	int index = this->length - 1;
 	this->length--;
 	this->right++;
-    return &this->arr[index];
+    return this->arr[index];
+}
+
+template <typename T>
+inline T rapid<T>::shift()
+{
+	int index = this->left;
+	this->left++;
+	this->length--;
+    return this->arr[index];
 }
 
 template <typename T>
