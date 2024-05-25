@@ -8,6 +8,7 @@ class rapid
 {
 public:
 	rapid();
+	T* pop();
 	void backForce(int force);
 	void frontForce(int force);
 	void push(T item);
@@ -30,6 +31,15 @@ private:
 template <typename T>
 inline rapid<T>::rapid()
 {
+}
+
+template <typename T>
+inline T *rapid<T>::pop()
+{
+	int index = this->length - 1;
+	this->length--;
+	this->right++;
+    return &this->arr[index];
 }
 
 template <typename T>
