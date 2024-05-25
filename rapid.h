@@ -3,7 +3,7 @@
 
 using namespace std;
 
-template<typename T>
+template <typename T>
 class rapid
 {
 public:
@@ -14,43 +14,39 @@ public:
 	void unshift(T item);
 	void norm();
 	void print();
+	void printArr();
 
 private:
-	T* arr = new T[0];
+	T *arr = new T[0];
 	int length = 0;
 	int left = 0;
 	int right = 0;
-	T* frontCopy(T* newArr);
-	T* backCopy(T* newArr);
-	T* createNewArr(int force);
-	void copy(T* newArr);
+	T *frontCopy(T *newArr);
+	T *backCopy(T *newArr);
+	T *createNewArr(int force);
+	void copy(T *newArr);
 };
 
-
-template<typename T>
+template <typename T>
 inline rapid<T>::rapid()
 {
-	
 }
 
-
-template<typename T>
+template <typename T>
 inline void rapid<T>::backForce(int force)
 {
 	this->right = force;
 	this->copy(this->frontCopy(this->createNewArr(force)));
-} 
+}
 
-
-template<typename T>
+template <typename T>
 inline void rapid<T>::frontForce(int force)
 {
 	this->left = force;
 	this->copy(this->backCopy(this->createNewArr(force)));
 }
 
-
-template<typename T>
+template <typename T>
 inline void rapid<T>::push(T item)
 {
 	this->arr[this->length] = item;
@@ -58,26 +54,30 @@ inline void rapid<T>::push(T item)
 	this->right--;
 }
 
-
-template<typename T>
+template <typename T>
 inline void rapid<T>::unshift(T item)
 {
-	cout << " hi " << endl;
+	this->left--;
+	this->length++;
+	this->arr[this->left] = item;
 }
 
-
-template<typename T>
+template <typename T>
 inline void rapid<T>::norm()
 {
-	if (this->right) 
+	if (this->right)
 	{
 		this->copy(this->frontCopy(this->createNewArr(0)));
 		this->right = 0;
 	}
+	else if (this->left)
+	{
+		this->copy(this->backCopy(this->createNewArr(0)));
+		this->left = 0;
+	}
 }
 
-
-template<typename T>
+template <typename T>
 inline void rapid<T>::print()
 {
 	cout << "===========================================" << endl;
@@ -89,9 +89,18 @@ inline void rapid<T>::print()
 	cout << "===========================================" << endl;
 }
 
+template <typename T>
+inline void rapid<T>::printArr()
+{
+	int index = this->length + this->left + this->right;
+	for (int i = 0; i < index; i++)
+	{
+		cout << " i = " << i << " : " << this->arr[i] << endl;
+	}
+}
 
-template<typename T>
-inline T* rapid<T>::frontCopy(T* newArr)
+template <typename T>
+inline T *rapid<T>::frontCopy(T *newArr)
 {
 	for (int i = 0; i < this->length; i++)
 	{
@@ -100,27 +109,25 @@ inline T* rapid<T>::frontCopy(T* newArr)
 	return newArr;
 }
 
-template<typename T>
-inline T* rapid<T>::backCopy(T* newArr)
-{    
-	for (int i = this->length - 1; i >= 0; i--) 
+template <typename T>
+inline T *rapid<T>::backCopy(T *newArr)
+{
+	for (int i = this->length - 1; i >= 0; i--)
 	{
-		newArr[this->left + i] = this->arr[i];
+		newArr[i] = this->arr[this->left + i];
 	}
 	return newArr;
 }
 
-template<typename T>
-inline T* rapid<T>::createNewArr(int force)
+template <typename T>
+inline T *rapid<T>::createNewArr(int force)
 {
 	return new T[this->length + force];
 }
 
-template<typename T>
-inline void rapid<T>::copy(T* newArr)
+template <typename T>
+inline void rapid<T>::copy(T *newArr)
 {
 	delete[] this->arr;
 	this->arr = newArr;
 }
-
-
