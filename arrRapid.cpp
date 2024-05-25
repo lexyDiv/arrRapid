@@ -35,7 +35,7 @@ int main()
     // arr->print();
     // arr->printArr();
     arr->norm();
-   // arr->print();
+    // arr->print();
     int el = arr->pop();
     int el2 = arr->pop();
     int el3 = arr->pop();
@@ -43,9 +43,9 @@ int main()
     int el4 = arr->shift();
     arr->norm();
     // arr->pop();
-   // arr->printArr();
+    // arr->printArr();
     arr->print();
-   // arr->printArr();
+    // arr->printArr();
     cout << " complite !!! " << " el : " << el << " el 2 : " << el2 << " el 3 : " << el3 << endl;
 
     int b;

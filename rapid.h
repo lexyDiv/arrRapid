@@ -38,7 +38,7 @@ inline rapid<T>::rapid()
 template <typename T>
 inline rapid<T>::~rapid()
 {
-	delete this->arr;
+	delete[] this->arr;
 }
 
 template <typename T>
@@ -47,7 +47,7 @@ inline T rapid<T>::pop()
 	int index = this->length - 1;
 	this->length--;
 	this->right++;
-    return this->arr[index];
+	return this->arr[index];
 }
 
 template <typename T>
@@ -56,7 +56,7 @@ inline T rapid<T>::shift()
 	int index = this->left;
 	this->left++;
 	this->length--;
-    return this->arr[index];
+	return this->arr[index];
 }
 
 template <typename T>
