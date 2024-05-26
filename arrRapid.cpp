@@ -50,8 +50,8 @@ int main()
     }
     arr->norm();
 
-   rapid<int>* test = arr->filter([](int a){
-    return a % 2 == 0;
+   rapid<int>* test = arr->filter([](int a, int i, int* arr){
+    return i % 2 == 0;
    });
    test->printArr();
     // rapid<int> newRapid = arr->filter([](int a){

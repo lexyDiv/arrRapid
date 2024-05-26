@@ -19,7 +19,7 @@ public:
 	void norm();
 	void print();
 	void printArr();
-	rapid<T> *filter(function<bool(T item)> fn);
+	rapid<T> *filter(function<bool(T item, int index, T *arr)> fn);
 
 private:
 	T *arr = new T[0];
@@ -129,14 +129,14 @@ inline void rapid<T>::printArr()
 }
 
 template <typename T>
-inline rapid<T> *rapid<T>::filter(function<bool(T item)> fn)
+inline rapid<T> *rapid<T>::filter(function<bool(T item, int index, T *arr)> fn)
 {
 	rapid<T> *newRapid = new rapid<T>;
 	newRapid->backForce(this->length);
 	for (int i = 0; i < this->length; i++)
 	{
 		T item = this->arr[i];
-		if (fn(item))
+		if (fn(item, i, this->arr))
 		{
 			newRapid->push(item);
 		}
