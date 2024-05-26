@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include "rapid.h"
+#include <functional>
 
 using namespace std;
 
@@ -13,9 +14,24 @@ public:
     }
 };
 
+void test(int num, function<void(int)> func)
+{
+    func(num);
+};
+
 int main()
 {
-    int LENGTH = 1000000000;
+
+    //    int* h = new int(1);
+    //    [h](int num){
+    //     num++;
+    //       cout << " this is lambda " << num << endl;
+    //    };
+
+    test(1, [](int num)
+         { cout << " this is lambda " << num << endl; });
+
+    int LENGTH = 100;
 
     rapid<rapid<rapid<int> *> *> *in3d = new rapid<rapid<rapid<int> *> *>;
 
@@ -32,21 +48,18 @@ int main()
         // arr->push(i);
         arr->unshift(i);
     }
-    // arr->print();
-    // arr->printArr();
     arr->norm();
-    // arr->print();
-    int el = arr->pop();
-    int el2 = arr->pop();
-    int el3 = arr->pop();
-    arr->norm();
-    int el4 = arr->shift();
-    arr->norm();
-    // arr->pop();
-    // arr->printArr();
-    arr->print();
-    // arr->printArr();
-    cout << " complite !!! " << " el : " << el << " el 2 : " << el2 << " el 3 : " << el3 << endl;
+
+   rapid<int>* test = arr->filter([](int a){
+    return a % 2 == 0;
+   });
+   test->printArr();
+    // rapid<int> newRapid = arr->filter([](int a){
+    //     if(a % 2 == 0) {
+    //         return true;
+    //     };
+    //     return false;
+    // });
 
     int b;
     cin >> b;

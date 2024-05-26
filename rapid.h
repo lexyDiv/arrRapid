@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <functional>
 
 using namespace std;
 
@@ -18,6 +19,7 @@ public:
 	void norm();
 	void print();
 	void printArr();
+	rapid<T> *filter(function<bool(T item)> fn);
 
 private:
 	T *arr = new T[0];
@@ -114,7 +116,7 @@ inline void rapid<T>::print()
 	cout << " first = " << this->arr[0] << endl;
 	cout << " last = " << this->arr[this->length - 1] << endl;
 	cout << "===========================================" << endl;
-}
+};
 
 template <typename T>
 inline void rapid<T>::printArr()
@@ -125,6 +127,23 @@ inline void rapid<T>::printArr()
 		cout << " i = " << i << " : " << this->arr[i] << endl;
 	}
 }
+
+template <typename T>
+inline rapid<T> *rapid<T>::filter(function<bool(T item)> fn)
+{
+	rapid<T> *newRapid = new rapid<T>;
+	newRapid->backForce(this->length);
+	for (int i = 0; i < this->length; i++)
+	{
+		T item = this->arr[i];
+		if (fn(item))
+		{
+			newRapid->push(item);
+		}
+	}
+	newRapid->norm();
+	return newRapid;
+};
 
 template <typename T>
 inline T *rapid<T>::frontCopy(T *newArr)
