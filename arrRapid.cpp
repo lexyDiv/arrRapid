@@ -1,70 +1,88 @@
 ﻿#include <iostream>
 #include "rapid.h"
 #include <functional>
+#include <vector>
+#include <set>
+#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
 class Unit
 {
 public:
-    int type;
-    Unit(int type)
-    {
-        this->type = type;
-    }
+  int type = 100;
+  Unit()
+  {
+    // cout << " unit conctructor " << endl;
+  }
+  Unit(int type)
+  {
+    this->type = type;
+  }
+  ~Unit()
+  {
+    // cout << " unit destractor " << endl;
+  }
 };
 
-void test(int num, function<void(int)> func)
-{
-    func(num);
-};
+// template<class T>
+// class box{
+//   public:
+//   arr
+// }
+
+void round();
 
 int main()
 {
 
-    //    int* h = new int(1);
-    //    [h](int num){
-    //     num++;
-    //       cout << " this is lambda " << num << endl;
-    //    };
-
-    test(1, [](int num)
-         { cout << " this is lambda " << num << endl; });
-
-    int LENGTH = 100;
-
-    rapid<rapid<rapid<int> *> *> *in3d = new rapid<rapid<rapid<int> *> *>;
-
-    int a;
-    cin >> a;
-
-    rapid<int> *arr = new rapid<int>;
-    // rapid<Unit*> *arr = new rapid<Unit*>;
-    // arr->backForce(LENGTH + 1);
-    arr->frontForce(LENGTH + 100);
-    // arr->print();
-    for (int i = 0; i < LENGTH; i++)
-    {
-        // arr->push(i);
-        arr->unshift(i);
-    }
-    arr->norm();
-
-   rapid<int>* test = arr->filter([](int a, int i, int* arr){
-    return i % 2 == 0;
-   });
-   test->printArr();
-    // rapid<int> newRapid = arr->filter([](int a){
-    //     if(a % 2 == 0) {
-    //         return true;
-    //     };
-    //     return false;
-    // });
-
-    int b;
-    cin >> b;
-    delete arr;
-    while (true)
-    {
-    }
+  int a = 0;
+  cin >> a;
+  round();
+  while (true)
+  {
+    // round();
+    std::this_thread::sleep_for(20ms);
+    // a++;
+    // cout << " a = " << a << endl;
+  }
 }
+
+void round()
+{
+
+  int rounds = 0;
+  int LENGTH = 10;
+
+  rapid<Unit *> *arr = new rapid<Unit *>;
+  arr->backForce(LENGTH + 100);
+  for (int i = 0; i < LENGTH; i++)
+  {
+    arr->push(new Unit(i));
+  }
+  arr->norm();
+  rapid<Unit *> *arr2 = arr->filter([](Unit *unit, int index)
+                                    { return unit->type % 2 == 0; });
+  // cout << " info = " << arr->arr[1]->type << endl;
+
+  cout << " indexOf " << arr->indexOf(arr2->getItem(2)) << endl;
+
+  // arr->printArr();
+  // cout << "-------------------" << endl;
+  // arr2->printArr();
+  // cout << "-------------------" << endl;
+  // cout << " bool " << (bool)(arr->getItem(2) == arr2->getItem(1)) << endl;
+
+  arr->forEach([](Unit *unit)
+               {
+    delete unit;
+    unit = nullptr; });
+
+  delete arr2;
+  delete arr;
+  arr2 = nullptr;
+  arr = nullptr;
+
+  // cout << " ALL DELETED !!! " << *a << endl;
+};
