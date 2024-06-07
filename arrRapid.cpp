@@ -21,17 +21,33 @@ int main(int argc, char *args[])
         return -1;
     }
 
+    bool quit = false;
+    SDL_Event e;
+    while(!quit)
+    {
+        while(SDL_PollEvent(&e) != 0)
+        {
+            if(e.type == SDL_QUIT)
+            {
+                quit = true;
+            }
+        }
+    
+
 struct Obj 
 {
     int x, y;
     int w, h;
 };
 
-Obj obj{10, 10, 100, 100};
+SDL_Rect q{0, 0, 1200, 675}; // anmX, animY
+SDL_Rect q2{0, 0, 200, 300};  // x, y
 
-    SDL_BlitSurface(loh, nullptr, gShurface, nullptr);
+    SDL_BlitSurface(loh, &q, gShurface, &q2);
     SDL_UpdateWindowSurface(gWindow);
-    SDL_Delay(2000);
+
+    }
+
     Close();
     return 0;
 }
@@ -81,6 +97,9 @@ bool LoadMedia()
 void Close()
 {
     SDL_FreeSurface(loh);
+    loh = nullptr;
     SDL_DestroyWindow(gWindow);
+    gWindow = nullptr;
+    SDL_Quit();
 }
 
