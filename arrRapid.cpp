@@ -33,9 +33,12 @@ int main(int argc, char* args[])
   else
   {
    screenShurface = SDL_GetWindowSurface(window);
+
+   SDL_Rect q{10, 10, 100, 100};
+
    SDL_FillRect(
     screenShurface,
-    nullptr,
+    &q,
     SDL_MapRGB(screenShurface->format, 255, 255, 255)
    );
    SDL_UpdateWindowSurface(window);
