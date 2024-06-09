@@ -26,7 +26,7 @@ public:
          int gabY,
          T texture);
          void draw();
-    ~Unit();
+   // ~Unit();
 };
 
 template <typename T>
@@ -40,7 +40,7 @@ inline Unit<T>::Unit(int x, int y, int conor, int alpha, int gabX, int gabY, T t
     this->x = x;
     this->y = y;
     this->conor = conor;
-    this->alpha = 255;
+    this->alpha = alpha;
     this->gabX = gabX;
     this->gabY = gabY;
     this->texture = texture;

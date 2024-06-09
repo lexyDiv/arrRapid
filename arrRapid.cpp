@@ -341,8 +341,8 @@ int main(int argc, char *args[])
 
     arr->backForce(2);
 
-    arr->push(new Unit<LTexture *>(0, 0, 0, 255, 200, 299, gSpriteSheetTexture));
-    arr->push(new Unit<LTexture *>(300, 0, 0, 255, 200, 299, gSpriteSheetTexture));
+    arr->push(new Unit<LTexture *>(0, 0, 0, 255, 200, 200, gSpriteSheetTexture));
+    arr->push(new Unit<LTexture *>(300, 0, 45, 10, 200, 200, gSpriteSheetTexture));
     arr->norm();
 
     // Start up SDL and create window
@@ -393,13 +393,19 @@ int main(int argc, char *args[])
 
                 // Render top left sprite
                 // gSpriteSheetTexture->render(0, 0, &gSpriteClips[0]); //// !!!!!
-                arr->forEach([](Unit<LTexture*>el){el->draw()});
-
+                arr->forEach([](Unit<LTexture*>* el){el->draw();});
+//   arr->forEach([](Unit *unit)
+//                {
+//     delete unit;
+//     unit = nullptr; });
                 // Update screen
                 SDL_RenderPresent(gRenderer);
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
+            arr->forEach([](Unit<LTexture*>* el){delete el; el = nullptr;});
+            delete arr;
+            arr = nullptr;
         }
     }
 
