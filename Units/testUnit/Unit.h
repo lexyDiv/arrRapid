@@ -17,6 +17,7 @@ public:
     int gabX;
     int gabY;
     T texture;
+    Unit();
     Unit(int x,
          int y,
          int conor,
@@ -24,8 +25,14 @@ public:
          int gabX,
          int gabY,
          T texture);
+         void draw();
     ~Unit();
 };
+
+template <typename T>
+inline Unit<T>::Unit()
+{
+}
 
 template <typename T>
 inline Unit<T>::Unit(int x, int y, int conor, int alpha, int gabX, int gabY, T texture)
@@ -37,4 +44,21 @@ inline Unit<T>::Unit(int x, int y, int conor, int alpha, int gabX, int gabY, T t
     this->gabX = gabX;
     this->gabY = gabY;
     this->texture = texture;
+}
+
+template <typename T>
+inline void Unit<T>::draw()
+{
+    this->texture->render(
+        this->x,
+        this->y,
+        this->conor,
+        this->alpha,
+        this->animX,
+        this->animY,
+        this->animStepX,
+        this->animStepY,
+        this->gabX,
+        this->gabY
+    );
 }

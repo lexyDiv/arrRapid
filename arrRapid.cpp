@@ -9,8 +9,8 @@
 #include <libavformat/avformat.h>
 #include "rapid.h"
 #include "Units/testUnit/Unit.h"
-//#include <ffmpeg/swscale.h>
-// Screen dimension constants
+// #include <ffmpeg/swscale.h>
+//  Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 // 1536 256
@@ -39,7 +39,17 @@ public:
     void free();
 
     // Renders texture at given point
-    void render(int x, int y, SDL_Rect *clip = NULL);
+    void render(
+        int x,
+        int y,
+        int conor,
+        int alpha,
+        int animX,
+        int animY,
+        int animStepX,
+        int animStepY,
+        int gabX,
+        int gabY);
 
     // Gets image dimensions
     int getWidth();
@@ -71,9 +81,8 @@ SDL_Renderer *gRenderer = NULL;
 
 // Scene sprites
 SDL_Rect gSpriteClips[4];
-//LTexture gSpriteSheetTexture;
-LTexture* gSpriteSheetTexture = new LTexture();
-
+// LTexture gSpriteSheetTexture;
+LTexture *gSpriteSheetTexture = new LTexture();
 
 LTexture::LTexture()
 {
@@ -142,55 +151,64 @@ void LTexture::free()
     }
 }
 
-void LTexture::render(int x, int y, SDL_Rect *clip)
+void LTexture::render(
+    int x,
+    int y,
+    int conor,
+    int alpha,
+    int animX,
+    int animY,
+    int animStepX,
+    int animStepY,
+    int gabX,
+    int gabY)
 {
     // Set rendering space and render to screen
-    SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-    // int hz = this->anim.x; // ok
-    // Set clip rendering dimensions
-    if (clip != NULL)
-    {
-        renderQuad.w = clip->w;
-        renderQuad.h = clip->h;
-    }
+    // SDL_Rect renderQuad = {x, y, mWidth, mHeight};
+    //  int hz = this->anim.x; // ok
+    //  Set clip rendering dimensions
+    //  if (clip != NULL)
+    //  {
+    //      renderQuad.w = clip->w;
+    //      renderQuad.h = clip->h;
+    //  }
 
     // Render to screen
     // SDL_RenderCopy( gRenderer, mTexture, clip, &renderQuad );
+     
 
-    SDL_Rect srcrect = this->anim;
-    SDL_Rect dstrect = this->pos;
+
+    SDL_Rect srcrect = {animX, animY, animStepX, animStepY}; // anim
+    SDL_Rect dstrect = {x, y, gabX, gabY};// pos
     SDL_RendererFlip flip = SDL_FLIP_HORIZONTAL;
     // SDL_SetTextureColorMod( mTexture,10,10,255);
-    SDL_SetTextureAlphaMod(mTexture, this->a);
-    SDL_RenderCopyEx(gRenderer, mTexture, &srcrect, &dstrect, this->conor, NULL, flip);
- this->a = 255;
-//   //  this->conor += 1;
-//     if (this->conor >= 360)
-//     {
-//         this->conor = 0;
-//     }
+    SDL_SetTextureAlphaMod(mTexture, alpha);
+    SDL_RenderCopyEx(gRenderer, mTexture, &srcrect, &dstrect, conor, NULL, flip);
+    
+    //   //  this->conor += 1;
+    //     if (this->conor >= 360)
+    //     {
+    //         this->conor = 0;
+    //     }
 
-  
-
-//     if (this->a == 255 || this->a == 0)
-//     {
-//         this->aV = -this->aV;
-//     }
-//     if (this->tik % 6 == 0)
-//     {
-//         this->animX += this->animStep;
-//         if (this->animX == 1536)
-//         {
-//             this->animX = 0;
-//         }
-//     }
-//     this->anim = {this->animX, 0, this->animStep, 256};
-//     this->tik++;
-//     if (this->tik == 10000)
-//     {
-//         this->tik = 0;
-//     }
-
+    //     if (this->a == 255 || this->a == 0)
+    //     {
+    //         this->aV = -this->aV;
+    //     }
+    //     if (this->tik % 6 == 0)
+    //     {
+    //         this->animX += this->animStep;
+    //         if (this->animX == 1536)
+    //         {
+    //             this->animX = 0;
+    //         }
+    //     }
+    //     this->anim = {this->animX, 0, this->animStep, 256};
+    //     this->tik++;
+    //     if (this->tik == 10000)
+    //     {
+    //         this->tik = 0;
+    //     }
 }
 
 int LTexture::getWidth()
@@ -319,7 +337,13 @@ void close()
 int main(int argc, char *args[])
 {
 
-   rapid<Unit*>* arr = new rapid<Unit*>;
+    rapid<Unit<LTexture *> *> *arr = new rapid<Unit<LTexture *> *>;
+
+    arr->backForce(2);
+
+    arr->push(new Unit<LTexture *>(0, 0, 0, 255, 200, 299, gSpriteSheetTexture));
+    arr->push(new Unit<LTexture *>(300, 0, 0, 255, 200, 299, gSpriteSheetTexture));
+    arr->norm();
 
     // Start up SDL and create window
     int tik = 0;
@@ -368,9 +392,9 @@ int main(int argc, char *args[])
                 SDL_RenderClear(gRenderer);
 
                 // Render top left sprite
-                gSpriteSheetTexture->render(0, 0, &gSpriteClips[0]);
+                // gSpriteSheetTexture->render(0, 0, &gSpriteClips[0]); //// !!!!!
+                arr->forEach([](Unit<LTexture*>el){el->draw()});
 
-             
                 // Update screen
                 SDL_RenderPresent(gRenderer);
 
