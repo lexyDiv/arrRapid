@@ -7,6 +7,8 @@
 #include <chrono>
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include "rapid.h"
+#include "Units/testUnit/Unit.h"
 //#include <ffmpeg/swscale.h>
 // Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -69,8 +71,8 @@ SDL_Renderer *gRenderer = NULL;
 
 // Scene sprites
 SDL_Rect gSpriteClips[4];
-LTexture gSpriteSheetTexture;
-
+//LTexture gSpriteSheetTexture;
+LTexture* gSpriteSheetTexture = new LTexture();
 
 
 LTexture::LTexture()
@@ -161,56 +163,34 @@ void LTexture::render(int x, int y, SDL_Rect *clip)
     // SDL_SetTextureColorMod( mTexture,10,10,255);
     SDL_SetTextureAlphaMod(mTexture, this->a);
     SDL_RenderCopyEx(gRenderer, mTexture, &srcrect, &dstrect, this->conor, NULL, flip);
-this->a = 255;
-  //  this->conor += 1;
-    if (this->conor >= 360)
-    {
-        this->conor = 0;
-    }
+ this->a = 255;
+//   //  this->conor += 1;
+//     if (this->conor >= 360)
+//     {
+//         this->conor = 0;
+//     }
 
-   // this->a += this->aV;
+  
 
-    if (this->a == 255 || this->a == 0)
-    {
-        this->aV = -this->aV;
-    }
-    if (this->tik % 6 == 0)
-    {
-        this->animX += this->animStep;
-        if (this->animX == 1536)
-        {
-            this->animX = 0;
-        }
-    }
-    this->anim = {this->animX, 0, this->animStep, 256};
-    this->tik++;
-    if (this->tik == 10000)
-    {
-        this->tik = 0;
-    }
-    //  enum SDL_RendererFlip
-    // {
-    //     SDL_FLIP_NONE = 0x00000000,     /**< Do not flip */
-    //     SDL_FLIP_HORIZONTAL = 0x00000001,    /**< flip horizontally */
-    //     SDL_FLIP_VERTICAL = 0x00000002     /**< flip vertically */
-    // } flip;
+//     if (this->a == 255 || this->a == 0)
+//     {
+//         this->aV = -this->aV;
+//     }
+//     if (this->tik % 6 == 0)
+//     {
+//         this->animX += this->animStep;
+//         if (this->animX == 1536)
+//         {
+//             this->animX = 0;
+//         }
+//     }
+//     this->anim = {this->animX, 0, this->animStep, 256};
+//     this->tik++;
+//     if (this->tik == 10000)
+//     {
+//         this->tik = 0;
+//     }
 
-    // SDL_RendererFlip flip = ;
-
-    //  enum<SDL_RendererFlip> flip = {
-    //     SDL_FLIP_NONE = 0x00000000,     /**< Do not flip */
-    // SDL_FLIP_HORIZONTAL = 0x00000001,    /**< flip horizontally */
-    // SDL_FLIP_VERTICAL = 0x00000002
-    //  };
-
-    // int SDL_RenderCopyEx(gRenderer,
-    //                        mTexture,
-    //                  &srcrect,
-    //                  &dstrect,
-    //                  0,
-    //                  NULL,
-    //                  flip
-    //                  );
 }
 
 int LTexture::getWidth()
@@ -283,7 +263,7 @@ bool loadMedia()
     bool success = true;
 
     // Load sprite sheet texture
-    if (!gSpriteSheetTexture.loadFromFile("src/zombi.png"))
+    if (!gSpriteSheetTexture->loadFromFile("src/zombi.png"))
     {
         printf("Failed to load sprite sheet texture!\n");
         success = false;
@@ -322,8 +302,9 @@ bool loadMedia()
 void close()
 {
     // Free loaded images
-    gSpriteSheetTexture.free();
-
+    gSpriteSheetTexture->free();
+    delete gSpriteSheetTexture;
+    gSpriteSheetTexture = nullptr;
     // Destroy window
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
@@ -337,6 +318,9 @@ void close()
 
 int main(int argc, char *args[])
 {
+
+   rapid<Unit*>* arr = new rapid<Unit*>;
+
     // Start up SDL and create window
     int tik = 0;
     int animX = 0;
@@ -384,17 +368,9 @@ int main(int argc, char *args[])
                 SDL_RenderClear(gRenderer);
 
                 // Render top left sprite
-                gSpriteSheetTexture.render(0, 0, &gSpriteClips[0]);
+                gSpriteSheetTexture->render(0, 0, &gSpriteClips[0]);
 
-                // Render top right sprite
-                // gSpriteSheetTexture.render( SCREEN_WIDTH - gSpriteClips[ 1 ].w, 0, &gSpriteClips[ 1 ] );
-
-                // Render bottom left sprite
-                // gSpriteSheetTexture.render( 0, SCREEN_HEIGHT - gSpriteClips[ 2 ].h, &gSpriteClips[ 2 ] );
-
-                // Render bottom right sprite
-                // gSpriteSheetTexture.render( SCREEN_WIDTH - gSpriteClips[ 3 ].w, SCREEN_HEIGHT - gSpriteClips[ 3 ].h, &gSpriteClips[ 3 ] );
-
+             
                 // Update screen
                 SDL_RenderPresent(gRenderer);
 
