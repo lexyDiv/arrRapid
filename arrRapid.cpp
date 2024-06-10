@@ -1,82 +1,19 @@
-﻿#include <SDL.h>
-#include <SDL_image.h>
-#include <stdio.h>
-#include <string>
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include "rapid.h"
-#include "Units/testUnit/Unit.h"
-// #include <ffmpeg/swscale.h>
-//  Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-// 1536 256
-// Texture wrapper class
-class LTexture
-{
-public:
-    int animStep = 1536 / 6;
-    int animX = 0;
-    int tik = 0;
-    int a = 0;
-    int aV = 1;
-    double conor = 0;
-    SDL_Rect pos = {200, 100, 250, 250};
-    SDL_Rect anim = {this->animX, 0, this->animStep, 256};
-    // Initializes variables
-    LTexture();
+﻿
+#include "Units/testUnit/Unit.cpp"
+#include "LTexture/LTexture.h"
+#include <SDL_ttf.h>
 
-    // Deallocates memory
-    ~LTexture();
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
-    // Loads image at specified path
-    bool loadFromFile(std::string path);
-
-    // Deallocates texture
-    void free();
-
-    // Renders texture at given point
-    void render(
-        int x,
-        int y,
-        int conor,
-        int alpha,
-        int animX,
-        int animY,
-        int animStepX,
-        int animStepY,
-        int gabX,
-        int gabY);
-
-    // Gets image dimensions
-    int getWidth();
-    int getHeight();
-
-private:
-    // The actual hardware texture
-    SDL_Texture *mTexture;
-
-    // Image dimensions
-    int mWidth;
-    int mHeight;
-};
-
-// Starts up SDL and creates window
 bool init();
 
-// Loads media
 bool loadMedia();
 
-// Frees media and shuts down SDL
 void close();
 
-// The window we'll be rendering to
 SDL_Window *gWindow = NULL;
 
-// The window renderer
 SDL_Renderer *gRenderer = NULL;
 
 // Scene sprites
@@ -84,142 +21,9 @@ SDL_Rect gSpriteClips[4];
 // LTexture gSpriteSheetTexture;
 LTexture *gSpriteSheetTexture = new LTexture();
 
-LTexture::LTexture()
-{
-    // Initialize
-    mTexture = NULL;
-    mWidth = 0;
-    mHeight = 0;
-}
+///////////////////////////////////////  text
 
-LTexture::~LTexture()
-{
-    // Deallocate
-    free();
-}
-
-bool LTexture::loadFromFile(std::string path)
-{
-    // Get rid of preexisting texture
-    free();
-
-    // The final texture
-    SDL_Texture *newTexture = NULL;
-
-    // Load image at specified path
-    SDL_Surface *loadedSurface = IMG_Load(path.c_str());
-    if (loadedSurface == NULL)
-    {
-        printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-    }
-    else
-    {
-        // Color key image
-        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
-
-        // Create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
-        if (newTexture == NULL)
-        {
-            printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-        }
-        else
-        {
-            // Get image dimensions
-            mWidth = loadedSurface->w;
-            mHeight = loadedSurface->h;
-        }
-
-        // Get rid of old loaded surface
-        SDL_FreeSurface(loadedSurface);
-    }
-
-    // Return success
-    mTexture = newTexture;
-    return mTexture != NULL;
-}
-
-void LTexture::free()
-{
-    // Free texture if it exists
-    if (mTexture != NULL)
-    {
-        SDL_DestroyTexture(mTexture);
-        mTexture = NULL;
-        mWidth = 0;
-        mHeight = 0;
-    }
-}
-
-void LTexture::render(
-    int x,
-    int y,
-    int conor,
-    int alpha,
-    int animX,
-    int animY,
-    int animStepX,
-    int animStepY,
-    int gabX,
-    int gabY)
-{
-    // Set rendering space and render to screen
-    // SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-    //  int hz = this->anim.x; // ok
-    //  Set clip rendering dimensions
-    //  if (clip != NULL)
-    //  {
-    //      renderQuad.w = clip->w;
-    //      renderQuad.h = clip->h;
-    //  }
-
-    // Render to screen
-    // SDL_RenderCopy( gRenderer, mTexture, clip, &renderQuad );
-     
-
-
-    SDL_Rect srcrect = {animX, animY, animStepX, animStepY}; // anim
-    SDL_Rect dstrect = {x, y, gabX, gabY};// pos
-    SDL_RendererFlip flip = SDL_FLIP_HORIZONTAL;
-    // SDL_SetTextureColorMod( mTexture,10,10,255);
-    SDL_SetTextureAlphaMod(mTexture, alpha);
-    SDL_RenderCopyEx(gRenderer, mTexture, &srcrect, &dstrect, conor, NULL, flip);
-    
-    //   //  this->conor += 1;
-    //     if (this->conor >= 360)
-    //     {
-    //         this->conor = 0;
-    //     }
-
-    //     if (this->a == 255 || this->a == 0)
-    //     {
-    //         this->aV = -this->aV;
-    //     }
-    //     if (this->tik % 6 == 0)
-    //     {
-    //         this->animX += this->animStep;
-    //         if (this->animX == 1536)
-    //         {
-    //             this->animX = 0;
-    //         }
-    //     }
-    //     this->anim = {this->animX, 0, this->animStep, 256};
-    //     this->tik++;
-    //     if (this->tik == 10000)
-    //     {
-    //         this->tik = 0;
-    //     }
-}
-
-int LTexture::getWidth()
-{
-    return mWidth;
-}
-
-int LTexture::getHeight()
-{
-    return mHeight;
-}
+/////////////////////////////////////
 
 bool init()
 {
@@ -240,8 +44,20 @@ bool init()
             printf("Warning: Linear texture filtering not enabled!");
         }
 
+        if (TTF_Init() != 0)
+        {
+            SDL_Quit();
+            return 1;
+        }
+
         // Create window
-        gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+        gWindow = SDL_CreateWindow("SDL Tutorial", 
+        SDL_WINDOWPOS_UNDEFINED, 
+        SDL_WINDOWPOS_UNDEFINED, 
+        SCREEN_WIDTH, 
+        SCREEN_HEIGHT, 
+        SDL_WINDOW_OPENGL
+        );
         if (gWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -277,41 +93,15 @@ bool init()
 
 bool loadMedia()
 {
+
     // Loading success flag
     bool success = true;
 
     // Load sprite sheet texture
-    if (!gSpriteSheetTexture->loadFromFile("src/zombi.png"))
+    if (!gSpriteSheetTexture->loadFromFile("src/zombi.png", gRenderer))
     {
         printf("Failed to load sprite sheet texture!\n");
         success = false;
-    }
-    else
-    {
-
-        // Set top left sprite
-        gSpriteClips[0].x = 0;
-        gSpriteClips[0].y = 0;
-        gSpriteClips[0].w = 1536 / 6;
-        gSpriteClips[0].h = 256;
-
-        // Set top right sprite
-        //  gSpriteClips[ 1 ].x = 100;
-        //  gSpriteClips[ 1 ].y =   0;
-        //  gSpriteClips[ 1 ].w = 100;
-        //  gSpriteClips[ 1 ].h = 100;
-
-        // //Set bottom left sprite
-        // gSpriteClips[ 2 ].x =   0;
-        // gSpriteClips[ 2 ].y = 100;
-        // gSpriteClips[ 2 ].w = 100;
-        // gSpriteClips[ 2 ].h = 100;
-
-        // //Set bottom right sprite
-        // gSpriteClips[ 3 ].x = 100;
-        // gSpriteClips[ 3 ].y = 100;
-        // gSpriteClips[ 3 ].w = 100;
-        // gSpriteClips[ 3 ].h = 100;
     }
 
     return success;
@@ -337,12 +127,12 @@ void close()
 int main(int argc, char *args[])
 {
 
-    rapid<Unit<LTexture *> *> *arr = new rapid<Unit<LTexture *> *>;
+    rapid<Unit *> *arr = new rapid<Unit *>;
 
     arr->backForce(2);
 
-    arr->push(new Unit<LTexture *>(0, 0, 0, 255, 200, 200, gSpriteSheetTexture));
-    arr->push(new Unit<LTexture *>(300, 0, 45, 10, 200, 200, gSpriteSheetTexture));
+    arr->push(new Unit(0, 0, 0, 255, 200, 200, gSpriteSheetTexture));
+    arr->push(new Unit(300, 0, 45, 10, 200, 200, gSpriteSheetTexture));
     arr->norm();
 
     // Start up SDL and create window
@@ -370,8 +160,10 @@ int main(int argc, char *args[])
 
             // While application is running
             int num = 0;
+            int tik = 0;
             while (!quit)
             {
+                tik++;
                 // num++;
                 // if(num == 100)
                 // {
@@ -389,21 +181,57 @@ int main(int argc, char *args[])
 
                 // Clear screen
                 SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                SDL_RenderClear(gRenderer);
+                // SDL_RenderClear(gRenderer);
+                SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
+                
+                
 
+                // for(int i = 0; i < 1000; i++)
+                // {
+                    SDL_Rect rect1 = {0, 0, 300, 600};
+                SDL_RenderFillRect(gRenderer, &rect1);
+
+                // SDL_Rect rect2 = {0, 0, 600, 600};
+                // SDL_RenderDrawRect(gRenderer, &rect2);
+               // }
                 // Render top left sprite
                 // gSpriteSheetTexture->render(0, 0, &gSpriteClips[0]); //// !!!!!
-                arr->forEach([](Unit<LTexture*>* el){el->draw();});
-//   arr->forEach([](Unit *unit)
-//                {
-//     delete unit;
-//     unit = nullptr; });
-                // Update screen
+
+                SDL_Rect rect;
+                rect.x = 0;
+                rect.y = 0;
+                rect.h = 600;
+                rect.w = 300;
+
+                SDL_RenderSetClipRect(gRenderer,
+                                      &rect);
+
+                arr->getItem(0)->draw(gRenderer);
+                // arr->forEach([](Unit *el)
+                //              { el->draw(gRenderer); });
+                // SDL_RenderCopy(gRenderer,mTexture,NULL,&abcPosition);
+                // SDL_RenderCopy(gRenderer, Message, NULL, &Message_rect);
+                arr->getItem(0)->x += 3;
+
+                rect.x = 0;
+                rect.y = 0;
+                rect.h = 600;
+                rect.w = 800;
+
+                SDL_RenderSetClipRect(gRenderer,
+                                      &rect);
+
+                if (tik % 10 == 0)
+                {
+                    arr->getItem(1)->draw(gRenderer);
+                }
+
                 SDL_RenderPresent(gRenderer);
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
-            arr->forEach([](Unit<LTexture*>* el){delete el; el = nullptr;});
+            arr->forEach([](Unit *el)
+                         {delete el; el = nullptr; });
             delete arr;
             arr = nullptr;
         }
