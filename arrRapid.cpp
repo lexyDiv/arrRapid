@@ -1,252 +1,389 @@
-﻿
-#include "Units/testUnit/Unit.cpp"
-#include "LTexture/LTexture.h"
-#include <SDL_ttf.h>
+﻿/*This source code copyrighted by Lazy Foo' Productions 2004-2024
+and may not be redistributed without written permission.*/
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+// Using SDL, SDL_image, standard IO, math, and strings
+#include <thread>
+#include <chrono>
+#include "Context/Context.cpp"
+//#include "Image/Image.cpp"
 
+///////////////////////////////////////////
+
+Context ctx(800, 600);
+
+Image *image = new Image("src/zombi.png", ctx.gRenderer);
+
+/////////////////////////////////////////
+
+// Screen dimension constants
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
+
+// Texture wrapper class
+class LTexture
+{
+public:
+	// Initializes variables
+	LTexture();
+
+	// Deallocates memory
+	~LTexture();
+
+	// Loads image at specified path
+	bool loadFromFile(std::string path);
+
+	// Deallocates texture
+	void free();
+
+	// Set color modulation
+	void setColor(Uint8 red, Uint8 green, Uint8 blue);
+
+	// Set blending
+	void setBlendMode(SDL_BlendMode blending);
+
+	// Set alpha modulation
+	void setAlpha(Uint8 alpha);
+
+	// Renders texture at given point
+	void render(int x, int y, SDL_Rect *clip = NULL, double angle = 0.0, SDL_Point *center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+	// Gets image dimensions
+	int getWidth();
+	int getHeight();
+
+private:
+	// The actual hardware texture
+	SDL_Texture *mTexture;
+
+	// Image dimensions
+	int mWidth;
+	int mHeight;
+};
+
+// Starts up SDL and creates window
 bool init();
 
+// Loads media
 bool loadMedia();
 
+// Frees media and shuts down SDL
 void close();
 
+// The window we'll be rendering to
 SDL_Window *gWindow = NULL;
 
+// The window renderer
 SDL_Renderer *gRenderer = NULL;
 
-// Scene sprites
-SDL_Rect gSpriteClips[4];
-// LTexture gSpriteSheetTexture;
-LTexture *gSpriteSheetTexture = new LTexture();
+// Scene texture
+LTexture gArrowTexture;
 
-///////////////////////////////////////  text
+LTexture::LTexture()
+{
+	// Initialize
+	mTexture = NULL;
+	mWidth = 0;
+	mHeight = 0;
+}
 
-/////////////////////////////////////
+LTexture::~LTexture()
+{
+	// Deallocate
+	free();
+}
+
+bool LTexture::loadFromFile(std::string path)
+{
+	// Get rid of preexisting texture
+	free();
+
+	// The final texture
+	SDL_Texture *newTexture = NULL;
+
+	// Load image at specified path
+	SDL_Surface *loadedSurface = IMG_Load(path.c_str());
+	if (loadedSurface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+	}
+	else
+	{
+		// Color key image
+		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
+
+		// Create texture from surface pixels
+		newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+		if (newTexture == NULL)
+		{
+			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+		}
+		else
+		{
+			// Get image dimensions
+			mWidth = loadedSurface->w;
+			mHeight = loadedSurface->h;
+		}
+
+		// Get rid of old loaded surface
+		SDL_FreeSurface(loadedSurface);
+	}
+
+	// Return success
+	mTexture = newTexture;
+	return mTexture != NULL;
+}
+
+void LTexture::free()
+{
+	// Free texture if it exists
+	if (mTexture != NULL)
+	{
+		SDL_DestroyTexture(mTexture);
+		mTexture = NULL;
+		mWidth = 0;
+		mHeight = 0;
+	}
+}
+
+void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+	// Modulate texture rgb
+	SDL_SetTextureColorMod(mTexture, red, green, blue);
+}
+
+void LTexture::setBlendMode(SDL_BlendMode blending)
+{
+	// Set blending function
+	SDL_SetTextureBlendMode(mTexture, blending);
+}
+
+void LTexture::setAlpha(Uint8 alpha)
+{
+	// Modulate texture alpha
+	SDL_SetTextureAlphaMod(mTexture, alpha);
+}
+
+void LTexture::render(int x, int y, SDL_Rect *clip, double angle, SDL_Point *center, SDL_RendererFlip flip)
+{
+	// Set rendering space and render to screen
+	SDL_Rect renderQuad = {x, y, mWidth, mHeight};
+
+	// Set clip rendering dimensions
+	if (clip != NULL)
+	{
+		renderQuad.w = clip->w;
+		renderQuad.h = clip->h;
+	}
+
+	// Render to screen
+	SDL_RenderCopyEx(gRenderer, mTexture, clip, &renderQuad, angle, center, flip);
+}
+
+int LTexture::getWidth()
+{
+	return mWidth;
+}
+
+int LTexture::getHeight()
+{
+	return mHeight;
+}
 
 bool init()
 {
-    // Initialization flag
-    bool success = true;
+	// Initialization flag
+	bool success = true;
 
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        success = false;
-    }
-    else
-    {
-        // Set texture filtering to linear
-        if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
-        {
-            printf("Warning: Linear texture filtering not enabled!");
-        }
+	// Initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
+		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+		success = false;
+	}
+	else
+	{
+		// Set texture filtering to linear
+		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+		{
+			printf("Warning: Linear texture filtering not enabled!");
+		}
 
-        if (TTF_Init() != 0)
-        {
-            SDL_Quit();
-            return 1;
-        }
+		// Create window
+		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+		if (gWindow == NULL)
+		{
+			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+			success = false;
+		}
+		else
+		{
+			// Create vsynced renderer for window
+			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+			if (gRenderer == NULL)
+			{
+				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+				success = false;
+			}
+			else
+			{
+				// Initialize renderer color
+				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-        // Create window
-        gWindow = SDL_CreateWindow("SDL Tutorial", 
-        SDL_WINDOWPOS_UNDEFINED, 
-        SDL_WINDOWPOS_UNDEFINED, 
-        SCREEN_WIDTH, 
-        SCREEN_HEIGHT, 
-        SDL_WINDOW_OPENGL
-        );
-        if (gWindow == NULL)
-        {
-            printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-            success = false;
-        }
-        else
-        {
-            // Create renderer for window
-            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-            if (gRenderer == NULL)
-            {
-                printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-                success = false;
-            }
-            else
-            {
-                // Initialize renderer color
-                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				// Initialize PNG loading
+				int imgFlags = IMG_INIT_PNG;
+				if (!(IMG_Init(imgFlags) & imgFlags))
+				{
+					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+					success = false;
+				}
+			}
+		}
+	}
 
-                // Initialize PNG loading
-                int imgFlags = IMG_INIT_PNG;
-                if (!(IMG_Init(imgFlags) & imgFlags))
-                {
-                    printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-                    success = false;
-                }
-            }
-        }
-    }
-
-    return success;
+	return success;
 }
 
 bool loadMedia()
 {
+	// Loading success flag
+	bool success = true;
 
-    // Loading success flag
-    bool success = true;
+	// Load arrow
+	if (!gArrowTexture.loadFromFile("src/arrow.png"))
+	{
+		printf("Failed to load arrow texture!\n");
+		success = false;
+	}
 
-    // Load sprite sheet texture
-    if (!gSpriteSheetTexture->loadFromFile("src/zombi.png", gRenderer))
-    {
-        printf("Failed to load sprite sheet texture!\n");
-        success = false;
-    }
-
-    return success;
+	return success;
 }
 
 void close()
 {
-    // Free loaded images
-    gSpriteSheetTexture->free();
-    delete gSpriteSheetTexture;
-    gSpriteSheetTexture = nullptr;
-    // Destroy window
-    SDL_DestroyRenderer(gRenderer);
-    SDL_DestroyWindow(gWindow);
-    gWindow = NULL;
-    gRenderer = NULL;
+	// Free loaded images
+	gArrowTexture.free();
 
-    // Quit SDL subsystems
-    IMG_Quit();
-    SDL_Quit();
+	// Destroy window
+	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyWindow(gWindow);
+	gWindow = NULL;
+	gRenderer = NULL;
+
+	// Quit SDL subsystems
+	IMG_Quit();
+	SDL_Quit();
 }
 
 int main(int argc, char *args[])
 {
+   bool quit = false;
+   SDL_Event e;
 
-    rapid<Unit *> *arr = new rapid<Unit *>;
+	while (!quit)
+	{
+		// Handle events on queue
+		while (SDL_PollEvent(&e) != 0)
+		{
+			// User requests quit
+			if (e.type == SDL_QUIT)
+			{
+				quit = true;
+			}
+		}
 
-    arr->backForce(2);
+		// Clear screen
+		//SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		//SDL_RenderClear(gRenderer);
+		ctx.ClearRect();
 
-    arr->push(new Unit(0, 0, 0, 255, 200, 200, gSpriteSheetTexture));
-    arr->push(new Unit(300, 0, 45, 10, 200, 200, gSpriteSheetTexture));
-    arr->norm();
+		// Render arrow
+		//gArrowTexture.render((SCREEN_WIDTH - gArrowTexture.getWidth()) / 2, (SCREEN_HEIGHT - gArrowTexture.getHeight()) / 2, NULL, degrees, NULL, flipType);
 
-    // Start up SDL and create window
-    int tik = 0;
-    int animX = 0;
+		// Update screen
+		//SDL_RenderPresent(gRenderer);
+		ctx.End();
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+	}
 
-    if (!init())
-    {
-        printf("Failed to initialize!\n");
-    }
-    else
-    {
-        // Load media
-        if (!loadMedia())
-        {
-            printf("Failed to load media!\n");
-        }
-        else
-        {
-            // Main loop flag
-            bool quit = false;
+	// //Start up SDL and create window
+	// if( !init() )
+	// {
+	// 	printf( "Failed to initialize!\n" );
+	// }
+	// else
+	// {
+	// 	//Load media
+	// 	if( !loadMedia() )
+	// 	{
+	// 		printf( "Failed to load media!\n" );
+	// 	}
+	// 	else
+	// 	{
+	// 		//Main loop flag
+	// 		bool quit = false;
 
-            // Event handler
-            SDL_Event e;
+	// 		//Event handler
+	// 		SDL_Event e;
 
-            // While application is running
-            int num = 0;
-            int tik = 0;
-            while (!quit)
-            {
-                tik++;
-                // num++;
-                // if(num == 100)
-                // {
-                //     gSpriteSheetTexture.free();
-                // }
-                // Handle events on queue
-                while (SDL_PollEvent(&e) != 0)
-                {
-                    // User requests quit
-                    if (e.type == SDL_QUIT)
-                    {
-                        quit = true;
-                    }
-                }
+	// 		//Angle of rotation
+	// 		double degrees = 0;
 
-                // Clear screen
-                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                // SDL_RenderClear(gRenderer);
-                SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
-                
-                
+	// 		//Flip type
+	// 		SDL_RendererFlip flipType = SDL_FLIP_NONE;
 
-                // for(int i = 0; i < 1000; i++)
-                // {
-                    SDL_Rect rect1 = {0, 0, 300, 600};
-                SDL_RenderFillRect(gRenderer, &rect1);
+	// 		//While application is running
+	// 		while( !quit )
+	// 		{
+	// 			//Handle events on queue
+	// 			while( SDL_PollEvent( &e ) != 0 )
+	// 			{
+	// 				//User requests quit
+	// 				if( e.type == SDL_QUIT )
+	// 				{
+	// 					quit = true;
+	// 				}
+	// 				else if( e.type == SDL_KEYDOWN )
+	// 				{
+	// 					switch( e.key.keysym.sym )
+	// 					{
+	// 						case SDLK_a:
+	// 						degrees -= 60;
+	// 						break;
 
-                // SDL_Rect rect2 = {0, 0, 600, 600};
-                // SDL_RenderDrawRect(gRenderer, &rect2);
-               // }
-                // Render top left sprite
-                // gSpriteSheetTexture->render(0, 0, &gSpriteClips[0]); //// !!!!!
+	// 						case SDLK_d:
+	// 						degrees += 60;
+	// 						break;
 
-                SDL_Rect rect;
-                rect.x = 0;
-                rect.y = 0;
-                rect.h = 600;
-                rect.w = 300;
+	// 						case SDLK_q:
+	// 						flipType = SDL_FLIP_HORIZONTAL;
+	// 						break;
 
-                SDL_RenderSetClipRect(gRenderer,
-                                      &rect);
+	// 						case SDLK_w:
+	// 						flipType = SDL_FLIP_NONE;
+	// 						break;
 
-                arr->getItem(0)->draw(gRenderer);
-                // arr->forEach([](Unit *el)
-                //              { el->draw(gRenderer); });
-                // SDL_RenderCopy(gRenderer,mTexture,NULL,&abcPosition);
-                // SDL_RenderCopy(gRenderer, Message, NULL, &Message_rect);
-                arr->getItem(0)->x += 3;
+	// 						case SDLK_e:
+	// 						flipType = SDL_FLIP_VERTICAL;
+	// 						break;
+	// 					}
+	// 				}
+	// 			}
 
-                rect.x = 0;
-                rect.y = 0;
-                rect.h = 600;
-                rect.w = 800;
+	// 			//Clear screen
+	// 			SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+	// 			SDL_RenderClear( gRenderer );
 
-                SDL_RenderSetClipRect(gRenderer,
-                                      &rect);
+	// 			//Render arrow
+	// 			gArrowTexture.render( ( SCREEN_WIDTH - gArrowTexture.getWidth() ) / 2, ( SCREEN_HEIGHT - gArrowTexture.getHeight() ) / 2, NULL, degrees, NULL, flipType );
 
-                if (tik % 10 == 0)
-                {
-                    arr->getItem(1)->draw(gRenderer);
-                }
+	// 			//Update screen
+	// 			SDL_RenderPresent( gRenderer );
+	// 		}
+	// 	}
+	// }
 
-                SDL_RenderPresent(gRenderer);
+	// //Free resources and close SDL
+	// close();
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(20));
-            }
-            arr->forEach([](Unit *el)
-                         {delete el; el = nullptr; });
-            delete arr;
-            arr = nullptr;
-        }
-    }
-
-    // Free resources and close SDL
-    close();
-
-    return 0;
+	return 0;
 }
-
-// int SDL_RenderCopyEx(SDL_Renderer*          renderer,
-//                  SDL_Texture*           texture,
-//                  const SDL_Rect*        srcrect,
-//                  const SDL_Rect*        dstrect,
-//                  const double           angle,
-//                  const SDL_Point*       center,
-//                  const SDL_RendererFlip flip);
