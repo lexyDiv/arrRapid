@@ -1,13 +1,12 @@
 #include "Image.h"
 
 
-Image::Image(std::string path, SDL_Renderer *gRenderer)
+Image::Image(std::string path)
 {
 	// Initialize
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;
-	this->gRenderer = gRenderer;
 	this->loadFromFile(path, gRenderer);
 }
 
@@ -37,7 +36,7 @@ bool Image::loadFromFile(std::string path, SDL_Renderer *gRenderer)
 		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
 		// Create texture from surface pixels
-		newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+		newTexture = SDL_CreateTextureFromSurface(this->gRenderer, loadedSurface);
 		if (newTexture == NULL)
 		{
 			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());

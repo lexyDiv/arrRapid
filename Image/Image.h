@@ -1,14 +1,14 @@
 #pragma once
 
-
+class Context;
 
 class Image
 {
 public:
 	SDL_Texture *mTexture;
-	SDL_Renderer *gRenderer = nullptr;
+	static SDL_Renderer *gRenderer;
 	// Initializes variables
-	Image(std::string path, SDL_Renderer *gRenderer);
+	Image(std::string path);
 
 	// Deallocates memory
 	~Image();
