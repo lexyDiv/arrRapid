@@ -1,8 +1,11 @@
 #pragma once
 
+
+
 class Image
 {
 public:
+	SDL_Texture *mTexture;
 	SDL_Renderer *gRenderer = nullptr;
 	// Initializes variables
 	Image(std::string path, SDL_Renderer *gRenderer);
@@ -34,7 +37,6 @@ public:
 
 private:
 	// The actual hardware texture
-	SDL_Texture *mTexture;
 
 	// Image dimensions
 	int mWidth;

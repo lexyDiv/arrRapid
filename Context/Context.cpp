@@ -1,6 +1,5 @@
 #include "Context.h"
 
-
 Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 {
     this->SCREEN_WIDTH = SCREEN_WIDTH;
@@ -22,7 +21,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
             printf("Warning: Linear texture filtering not enabled!");
         }
 
-        // Create window
+        // Create window SDL_WINDOW_FULLSCREEN  SDL_WINDOW_OPENGL
         this->gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->SCREEN_WIDTH, this->SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
         if (this->gWindow == NULL)
         {
@@ -73,7 +72,16 @@ void Context::Close()
 
 void Context::ClearRect()
 {
-    SDL_RenderClear(this->gRenderer);
+    SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
+    SDL_Rect rect = {0, 0, this->SCREEN_WIDTH, this->SCREEN_HEIGHT};
+    SDL_RenderFillRect(this->gRenderer, &rect);
+}
+
+void Context::ClearRect(int x, int y, int width, int height)
+{
+    SDL_SetRenderDrawColor(this->gRenderer, 255, 255, 255, 255);
+    SDL_Rect rect = {x, y, width, height};
+    SDL_RenderFillRect(this->gRenderer, &rect);
 }
 
 void Context::End()
@@ -81,10 +89,57 @@ void Context::End()
     SDL_RenderPresent(this->gRenderer);
 }
 
-void Context::DrawImage(Image &image, int animX, int animY, int animW, int animH, int x, int y, int width, int height, double conor, SDL_RendererFlip flip)
+SDL_Renderer *Context::getRenderer()
+{
+    return this->gRenderer;
+}
+
+void Context::DrawImage(Image *image,
+                        int animX,
+                        int animY,
+                        int animW,
+                        int animH,
+                        int x,
+                        int y,
+                        int width,
+                        int height,
+                        SDL_RendererFlip flip,
+                        double conor,
+                        int alpha,
+                        int rotX,
+                        int rotY,
+                        int R,
+                        int G,
+                        int B)
 {
     SDL_Rect anim{animX, animY, animW, animH};
     SDL_Rect pos{x, y, width, height};
-   // image.render();
-//  render(int x, int y, SDL_Rect *clip, double angle, SDL_Point *center, SDL_RendererFlip flip)  
+    SDL_Point center{rotX, rotY};
+
+    SDL_SetTextureAlphaMod(image->mTexture, alpha);
+    SDL_SetTextureColorMod(image->mTexture, R, G, B);
+    SDL_RenderCopyEx(this->gRenderer, image->mTexture, &anim, &pos, conor, &center, flip);
+    SDL_SetTextureAlphaMod(image->mTexture, 255);
+    SDL_SetTextureColorMod(image->mTexture, 255, 255, 255);
+}
+
+void Context::DrawImage(Image *image,
+                        int animX,
+                        int animY,
+                        int animW,
+                        int animH,
+                        int x,
+                        int y,
+                        int width,
+                        int height)
+{
+    SDL_Rect anim{animX, animY, animW, animH};
+    SDL_Rect pos{x, y, width, height};
+
+    SDL_RenderCopyEx(this->gRenderer, image->mTexture, &anim, &pos, 0, NULL, SDL_FLIP_NONE);
+}
+
+Context::~Context()
+{
+    this->Close();
 }

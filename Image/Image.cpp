@@ -1,5 +1,6 @@
 #include "Image.h"
 
+
 Image::Image(std::string path, SDL_Renderer *gRenderer)
 {
 	// Initialize
