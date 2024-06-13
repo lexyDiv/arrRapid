@@ -27,7 +27,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
         SDL_WINDOWPOS_UNDEFINED, 
         this->SCREEN_WIDTH, 
         this->SCREEN_HEIGHT, 
-        SDL_WINDOW_FULLSCREEN | SDL_WINDOW_SHOWN);
+        SDL_WINDOW_OPENGL);
         if (this->gWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());

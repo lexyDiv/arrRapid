@@ -20,6 +20,7 @@ struct Color
 class Context
 {
 public:
+SDL_Window *gWindow = nullptr;
     Context(int SCREEN_WIDTH, int SCREEN_HEIGHT);
     Color ColorsMap(std::string color);
     void Close();
@@ -110,6 +111,6 @@ public:
 private:
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
-    SDL_Window *gWindow = nullptr;
+    
     SDL_Renderer *gRenderer = nullptr;
 };

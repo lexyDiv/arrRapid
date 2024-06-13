@@ -13,7 +13,19 @@ and may not be redistributed without written permission.*/
 int main(int argc, char *args[])
 {
 
-	getField();
+	arr->backForce(300);
+	for (int i = 0; i < 300; i++)
+	{
+		arr->push(new rapid<Cell *>);
+		arr->getItem(i)->backForce(200);
+		for (int k = 0; k < 200; k++)
+		{
+			Cell *cell = new Cell(k + 600, i, 2);
+			arr->getItem(i)->push(cell);
+		}
+		arr->getItem(i)->norm();
+	}
+	arr->norm();
 
 	int ver = 0;
 
@@ -45,6 +57,7 @@ int main(int argc, char *args[])
 		ctx.FillRect(0, 0, 600, 600, "white");
 
 		ctx.DrawImage(image, 0, 0, 1536 / 6, 256, 100, 100, 300, 300);
+		ctx.DrawImage(test, 0, 0, 200, 300, 0, 0, 200, 300);
 
 		SDL_Rect rect2;
 		rect2.x = 600;
@@ -95,5 +108,7 @@ int main(int argc, char *args[])
 	ctx.Close();
 	delete image;
 	image = nullptr;
+	delete test;
+	test = nullptr;
 	return 0;
 }
