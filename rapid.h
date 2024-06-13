@@ -34,7 +34,7 @@ public:
 	T &getItem(int index)
 	{
 		return this->arr[index];
-	}
+	};
 
 
 
@@ -47,7 +47,7 @@ public:
 		{
 			this->item = item;
 			this->koof = koof;
-		}
+		};
 	};
 
 private:
@@ -65,13 +65,13 @@ private:
 template <typename T>
 inline rapid<T>::rapid()
 {
-}
+};
 
 template <typename T>
 inline rapid<T>::~rapid()
 {
 	delete[] this->arr;
-}
+};
 
 template <typename T>
 inline T rapid<T>::pop()
@@ -80,7 +80,7 @@ inline T rapid<T>::pop()
 	this->length--;
 	this->right++;
 	return this->arr[index];
-}
+};
 
 template <typename T>
 inline T rapid<T>::shift()
@@ -89,21 +89,21 @@ inline T rapid<T>::shift()
 	this->left++;
 	this->length--;
 	return this->arr[index];
-}
+};
 
 template <typename T>
 inline void rapid<T>::backForce(int force)
 {
 	this->right = force;
 	this->copy(this->frontCopy(this->createNewArr(force)));
-}
+};
 
 template <typename T>
 inline void rapid<T>::frontForce(int force)
 {
 	this->left = force;
 	this->copy(this->backCopy(this->createNewArr(force)));
-}
+};
 
 template <typename T>
 inline void rapid<T>::push(T item)
@@ -111,7 +111,7 @@ inline void rapid<T>::push(T item)
 	this->arr[this->length] = item;
 	this->length++;
 	this->right--;
-}
+};
 
 template <typename T>
 inline void rapid<T>::unshift(T item)
@@ -119,7 +119,7 @@ inline void rapid<T>::unshift(T item)
 	this->left--;
 	this->length++;
 	this->arr[this->left] = item;
-}
+};
 
 template <typename T>
 inline void rapid<T>::norm()
@@ -134,7 +134,7 @@ inline void rapid<T>::norm()
 		this->copy(this->backCopy(this->createNewArr(0)));
 		this->left = 0;
 	}
-}
+};
 
 template <typename T>
 inline void rapid<T>::print()
@@ -156,7 +156,7 @@ inline void rapid<T>::printArr()
 	{
 		cout << " i = " << i << " : " << this->arr[i] << endl;
 	}
-}
+};
 
 template <typename T>
 inline rapid<T> *rapid<T>::filter(function<bool(T item, int index)> fn)
@@ -172,7 +172,7 @@ inline rapid<T> *rapid<T>::filter(function<bool(T item, int index)> fn)
 	}
 	newRapid->norm();
 	return newRapid;
-}
+};
 
 template <typename T>
 inline rapid<T> *rapid<T>::sort(function<bool(T a, T b)> fn)
@@ -186,7 +186,7 @@ inline rapid<T> *rapid<T>::sort(function<bool(T a, T b)> fn)
 
 	std::sort(&newRapid->arr[0], &newRapid->arr[this->length], fn);
 	return newRapid;
-}
+};
 
 template <typename T>
 inline T rapid<T>::min(function<int(T item)> fn)
@@ -204,7 +204,7 @@ inline T rapid<T>::min(function<int(T item)> fn)
 		}
 	}
 	return min.item;
-}
+};
 
 template <typename T>
 inline T rapid<T>::max(function<int(T item)> fn)
@@ -221,7 +221,7 @@ inline T rapid<T>::max(function<int(T item)> fn)
 		}
 	}
 	return min.item;
-}
+};
 
 template <typename T>
 inline void rapid<T>::forEach(function<void(T item)> fn)
@@ -244,7 +244,7 @@ inline int rapid<T>::indexOf(T item)
 		}
 	}
 	return -1;
-}
+};
 
 template <typename T>
 inline void rapid<T>::forEach(function<void(T item, int index)> fn)
@@ -252,8 +252,8 @@ inline void rapid<T>::forEach(function<void(T item, int index)> fn)
 	for (int i = 0; i < this->length; i++)
 	{
 		fn(this->arr[i], i);
-	}
-}
+	};
+};
 
 template <typename T>
 inline void rapid<T>::forEach(function<void(T item, int index, T **arr)> fn)
@@ -261,8 +261,8 @@ inline void rapid<T>::forEach(function<void(T item, int index, T **arr)> fn)
 	for (int i = 0; i < this->length; i++)
 	{
 		fn(this->arr[i], i, this->arr);
-	}
-}
+	};
+};
 
 template <typename T>
 inline T *rapid<T>::frontCopy(T *newArr)
@@ -270,9 +270,9 @@ inline T *rapid<T>::frontCopy(T *newArr)
 	for (int i = 0; i < this->length; i++)
 	{
 		newArr[i] = this->arr[i];
-	}
+	};
 	return newArr;
-}
+};
 
 template <typename T>
 inline T *rapid<T>::backCopy(T *newArr)
@@ -280,15 +280,15 @@ inline T *rapid<T>::backCopy(T *newArr)
 	for (int i = this->length - 1; i >= 0; i--)
 	{
 		newArr[i] = this->arr[this->left + i];
-	}
+	};
 	return newArr;
-}
+};
 
 template <typename T>
 inline T *rapid<T>::createNewArr(int force)
 {
 	return new T[this->length + force];
-}
+};
 
 template <typename T>
 inline void rapid<T>::copy(T *newArr)
@@ -296,7 +296,7 @@ inline void rapid<T>::copy(T *newArr)
 	delete[] this->arr;
 	this->arr = newArr;
 	// cout << this->arr << endl;
-}
+};
 
 template <typename T>
 inline rapid<T> *rapid<T>::createRapid()
@@ -304,4 +304,4 @@ inline rapid<T> *rapid<T>::createRapid()
 	rapid<T> *newRapid = new rapid<T>;
 	newRapid->backForce(this->length);
 	return newRapid;
-}
+};

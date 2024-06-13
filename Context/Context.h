@@ -6,6 +6,7 @@
 #include <string>
 #include <cmath>
 #include "../Image/Image.cpp"
+#include "../rapid.h"
 
 struct Color
 {

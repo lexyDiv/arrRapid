@@ -22,7 +22,12 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
         }
 
         // Create window SDL_WINDOW_FULLSCREEN  SDL_WINDOW_OPENGL
-        this->gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->SCREEN_WIDTH, this->SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+        this->gWindow = SDL_CreateWindow("SDL Tutorial", 
+        SDL_WINDOWPOS_UNDEFINED, 
+        SDL_WINDOWPOS_UNDEFINED, 
+        this->SCREEN_WIDTH, 
+        this->SCREEN_HEIGHT, 
+        SDL_WINDOW_FULLSCREEN | SDL_WINDOW_SHOWN);
         if (this->gWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -31,7 +36,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
         else
         {
             // Create vsynced renderer for window
-            this->gRenderer = SDL_CreateRenderer(this->gWindow, -1, SDL_RENDERER_ACCELERATED);
+            this->gRenderer = SDL_CreateRenderer(this->gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
             if (this->gRenderer == NULL)
             {
                 printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
@@ -40,7 +45,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
             else
             {
                 // Initialize renderer color
-                SDL_SetRenderDrawColor(this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+               // SDL_SetRenderDrawColor(this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
                 // Initialize PNG loading
                 int imgFlags = IMG_INIT_PNG;
