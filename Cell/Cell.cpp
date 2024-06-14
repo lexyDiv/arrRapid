@@ -1,5 +1,9 @@
 #include "Cell.h"
-#include "../Context/addContext.cpp"
+
+
+
+
+
 
 Cell::Cell(){};
 
@@ -8,6 +12,7 @@ Cell::Cell(int x, int y, int gab)
     this->x = x;
     this->y = y;
     this->gab = gab;
+    
 };
 
 void Cell::draw(int index, int ver)

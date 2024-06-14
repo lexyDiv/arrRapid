@@ -1,6 +1,8 @@
 #pragma once
 
-class Context;
+#include "../rapid.h"
+
+//class Context;
 
 class Image
 {

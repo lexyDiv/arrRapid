@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Context/Context.cpp"
+
 class Cell
 {
 public:

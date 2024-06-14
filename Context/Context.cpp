@@ -305,3 +305,6 @@ Context::~Context()
 {
     this->Close();
 }
+
+ Context ctx(800, 600);
+ SDL_Renderer *Image::gRenderer = ctx.getRenderer();
