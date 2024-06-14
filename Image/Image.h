@@ -1,6 +1,6 @@
 #pragma once
 
-class Context;
+//class Context;
 
 class Image
 {
