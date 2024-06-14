@@ -98,6 +98,10 @@ Color Context::ColorsMap(std::string color)
     {
         return {0, 0, 0};
     }
+    else if (color == "dgreen")
+    {
+        return {0, 100, 0};
+    }
     return {0, 0, 0};
 }
 

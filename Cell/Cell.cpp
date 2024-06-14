@@ -3,11 +3,12 @@
 
 Cell::Cell(){};
 
-Cell::Cell(int x, int y, int gab)
+Cell::Cell(int x, int y, int gab, std::string color)
 {
     this->x = x;
     this->y = y;
     this->gab = gab;
+    this->color = color;
 };
 
 void Cell::draw(int index, int ver)

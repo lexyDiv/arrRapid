@@ -2,8 +2,7 @@
 and may not be redistributed without written permission.*/
 
 // Using SDL, SDL_image, standard IO, math, and strings
-#include <thread>
-#include <chrono>
+#include "include.h"
 
 // #include "Context/addContext.cpp"
 #include "Cell/Cell.cpp"
@@ -643,19 +642,7 @@ int main(int argc, char *args[])
 		printf("Failed to load media!\n");
 	}
 
-	arr->backForce(300);
-	for (int i = 0; i < 300; i++)
-	{
-		arr->push(new rapid<Cell *>);
-		arr->getItem(i)->backForce(200);
-		for (int k = 0; k < 200; k++)
-		{
-			Cell *cell = new Cell(k + 600, i, 2);
-			arr->getItem(i)->push(cell);
-		}
-		arr->getItem(i)->norm();
-	}
-	arr->norm();
+    getField();
 
 	int ver = 0;
 
