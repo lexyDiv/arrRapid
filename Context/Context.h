@@ -108,7 +108,7 @@ SDL_Window *gWindow = nullptr;
                    int rotY);
     ~Context();
 
-private:
+public:
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
     
