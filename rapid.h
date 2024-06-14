@@ -4,6 +4,13 @@
 #include <set>
 #include <algorithm>
 #include <bits/stdc++.h>
+#include <thread>
+#include <chrono>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <stdio.h>
+#include <string>
+#include <cmath>
 
 using namespace std;
 

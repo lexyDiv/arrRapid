@@ -1,15 +1,10 @@
-﻿/*This source code copyrighted by Lazy Foo' Productions 2004-2024
-and may not be redistributed without written permission.*/
+﻿#include "function.cpp"
 
-// Using SDL, SDL_image, standard IO, math, and strings
-#include "include.h"
 
-// #include "Context/addContext.cpp"
-#include "Cell/Cell.cpp"
 
-// foo
-// gRenderer
-// SDL_LockSurface
+
+
+
 
 class LTexture
 {
@@ -642,7 +637,7 @@ int main(int argc, char *args[])
 		printf("Failed to load media!\n");
 	}
 
-    getField();
+  //  getField();
 
 	int ver = 0;
 
@@ -697,7 +692,7 @@ int main(int argc, char *args[])
 			(ctx.SCREEN_HEIGHT - gStreamingTexture.getHeight()) / 2);
 
 		//////////////////////////////////////////////////////
-          ctx.FillRect(0, 0, 150, 150, "violet");
+           ctx.FillRect(0, 0, 150, 150, "red");
 		// SDL_Rect rect;
 		// rect.x = 0;
 		// rect.y = 0;
@@ -747,14 +742,14 @@ int main(int argc, char *args[])
 		// }
 
 		ctx.End();
-		conor += 1;
-		x++;
+	
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 	ctx.Close();
-	delete image;
-	image = nullptr;
-	delete test;
-	test = nullptr;
+	
+	//delete image;
+	//image = nullptr;
+	//delete test;
+	//test = nullptr;
 	return 0;
 }

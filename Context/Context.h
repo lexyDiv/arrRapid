@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Image/Image.cpp"
 
 struct Color
 {
