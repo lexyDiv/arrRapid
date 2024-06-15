@@ -8,7 +8,7 @@ public:
 	// Surface pixels
 	SDL_Surface *mSurfacePixels;
 	// Initializes variables
-	double colorCode = 4294967295;
+
 	LTexture();
 
 	// Deallocates memory
@@ -59,26 +59,7 @@ private:
 };
 
 // A test animation stream
-class DataStream
-{
-public:
-	// Initializes internals
-	DataStream();
 
-	// Loads initial data
-	bool loadMediaData();
-
-	// Deallocator
-	void free();
-
-	// Gets current frame data
-
-private:
-	// Internal data
-	SDL_Surface *mImages[1];
-	int mCurrentImage;
-	int mDelayFrames;
-};
 
 // Starts up SDL and creates window
 
@@ -99,7 +80,7 @@ SDL_Renderer *gRenderer = NULL;
 LTexture gStreamingTexture;
 
 // Animation stream
-DataStream gDataStream;
+
 
 LTexture::LTexture()
 {
@@ -119,41 +100,7 @@ LTexture::~LTexture()
 	free();
 }
 
-#if defined(SDL_TTF_MAJOR_VERSION)
-bool LTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor)
-{
-	// Get rid of preexisting texture
-	free();
 
-	// Render text surface
-	SDL_Surface *textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
-	if (textSurface != NULL)
-	{
-		// Create texture from surface pixels
-		mTexture = SDL_CreateTextureFromSurface(ctx.getRenderer(), textSurface);
-		if (mTexture == NULL)
-		{
-			printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
-		}
-		else
-		{
-			// Get image dimensions
-			mWidth = textSurface->w;
-			mHeight = textSurface->h;
-		}
-
-		// Get rid of old surface
-		SDL_FreeSurface(textSurface);
-	}
-	else
-	{
-		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
-	}
-
-	// Return success
-	return mTexture != NULL;
-}
-#endif
 
 bool LTexture::createBlank(int width, int height)
 {
@@ -166,11 +113,7 @@ bool LTexture::createBlank(int width, int height)
 	{
 		printf("Unable to create streamable blank texture! SDL Error: %s\n", SDL_GetError());
 	}
-	else
-	{
-		mWidth = width;
-		mHeight = height;
-	}
+	
 
 	return mTexture != NULL;
 }
@@ -221,51 +164,11 @@ void LTexture::render(int x, int y, SDL_Rect *clip, double angle, SDL_Point *cen
 // 0xFF0000FF red
 // 0x0000FFFF blue
 
-DataStream::DataStream()
-{
-	mImages[0] = NULL;
-	mImages[1] = NULL;
-	mImages[2] = NULL;
-	mImages[3] = NULL;
 
-	mCurrentImage = 0;
-	mDelayFrames = 4;
-}
 
-bool DataStream::loadMediaData()
-{
-	bool success = true;
 
-	// for (int i = 0; i < 4; ++i)
-	///{
-	std::stringstream path;
-	path << "src/map" << ".png";
 
-	SDL_Surface *loadedSurface = IMG_Load(path.str().c_str());
-	if (loadedSurface == NULL)
-	{
-		printf("Unable to load %s! SDL_image error 2: %s\n", path.str().c_str(), IMG_GetError());
-		success = false;
-	}
-	else
-	{
-		mImages[0] = SDL_ConvertSurfaceFormat(loadedSurface, SDL_PIXELFORMAT_RGBA8888, 0);
-	}
 
-	SDL_FreeSurface(loadedSurface);
-	//}
-
-	return success;
-}
-
-void DataStream::free()
-{
-	for (int i = 0; i < 4; ++i)
-	{
-		SDL_FreeSurface(mImages[i]);
-		mImages[i] = NULL;
-	}
-}
 
 
 
@@ -352,7 +255,7 @@ void close()
 {
 	// Free loaded images
 	gStreamingTexture.free();
-	gDataStream.free();
+	
 
 	// Destroy window
 	//  SDL_DestroyRenderer( gRenderer );
