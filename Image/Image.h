@@ -9,6 +9,7 @@ public:
 	static SDL_Renderer *gRenderer;
 	// Initializes variables
 	Image(std::string path);
+	Image(int width, int height);
 
 	// Deallocates memory
 	~Image();
