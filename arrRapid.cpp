@@ -15,18 +15,12 @@ public:
 	~LTexture();
 
 	// Loads image at specified path
-	bool loadFromFile(std::string path);
 
 	// Loads image into pixel buffer
-	bool loadPixelsFromFile(std::string path);
 
 	// Creates image from preloaded pixels
-	bool loadFromPixels();
 
-#if defined(SDL_TTF_MAJOR_VERSION)
-	// Creates image from font string
-	bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
-#endif
+
 
 	// Creates blank texture
 	bool createBlank(int width, int height);
@@ -35,29 +29,22 @@ public:
 	void free();
 
 	// Set color modulation
-	void setColor(Uint8 red, Uint8 green, Uint8 blue);
+	
 
 	// Set blending
-	void setBlendMode(SDL_BlendMode blending);
+	
 
 	// Set alpha modulation
-	void setAlpha(Uint8 alpha);
+	
 
 	// Renders texture at given point
 	void render(int x, int y, SDL_Rect *clip = NULL, double angle = 0.0, SDL_Point *center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	// Gets image dimensions
-	int getWidth();
-	int getHeight();
 
 	// Pixel accessors
-	Uint32 *getPixels32();
-	Uint32 getPixel32(Uint32 x, Uint32 y);
-	Uint32 getPitch32();
-	Uint32 mapRGBA(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
-	void copyRawPixels32(void *pixels);
-	bool lockTexture();
-	bool unlockTexture();
+
+	
 
 private:
 	// The actual hardware texture
@@ -85,7 +72,6 @@ public:
 	void free();
 
 	// Gets current frame data
-	void *getBuffer();
 
 private:
 	// Internal data
@@ -95,7 +81,7 @@ private:
 };
 
 // Starts up SDL and creates window
-bool init();
+
 
 // Loads media
 bool loadMedia();
@@ -131,93 +117,6 @@ LTexture::~LTexture()
 {
 	// Deallocate
 	free();
-}
-
-bool LTexture::loadFromFile(std::string path)
-{
-	// Load pixels
-	if (!loadPixelsFromFile(path))
-	{
-		printf("Failed to load pixels for %s!\n", path.c_str());
-	}
-	else
-	{
-		// Load texture from pixels
-		if (!loadFromPixels())
-		{
-			printf("Failed to texture from pixels from %s!\n", path.c_str());
-		}
-	}
-
-	// Return success
-	return mTexture != NULL;
-}
-
-bool LTexture::loadPixelsFromFile(std::string path)
-{
-	// Free preexisting assets
-	free();
-
-	// Load image at specified path
-	SDL_Surface *loadedSurface = IMG_Load(path.c_str());
-	if (loadedSurface == NULL)
-	{
-		printf("Unable to load image %s! SDL_image Error 1: %s\n", path.c_str(), IMG_GetError());
-	}
-	else
-	{
-		// Convert surface to display format
-		mSurfacePixels = SDL_ConvertSurfaceFormat(loadedSurface, SDL_GetWindowPixelFormat(ctx.gWindow), 0);
-		if (mSurfacePixels == NULL)
-		{
-			printf("Unable to convert loaded surface to display format! SDL Error: %s\n", SDL_GetError());
-		}
-		else
-		{
-			// Get image dimensions
-			mWidth = mSurfacePixels->w;
-			mHeight = mSurfacePixels->h;
-		}
-
-		// Get rid of old loaded surface
-		SDL_FreeSurface(loadedSurface);
-	}
-
-	return mSurfacePixels != NULL;
-}
-
-bool LTexture::loadFromPixels()
-{
-	// Only load if pixels exist
-	if (mSurfacePixels == NULL)
-	{
-		printf("No pixels loaded!");
-	}
-	else
-	{
-		// Color key image
-		SDL_SetColorKey(mSurfacePixels, SDL_TRUE, SDL_MapRGB(mSurfacePixels->format, 0, 0xFF, 0xFF));
-
-		// Create texture from surface pixels
-		mTexture = SDL_CreateTextureFromSurface(ctx.getRenderer(), mSurfacePixels);
-		if (mTexture == NULL)
-		{
-			printf("Unable to create texture from loaded pixels! SDL Error: %s\n", SDL_GetError());
-		}
-		else
-		{
-			// Get image dimensions
-			mWidth = mSurfacePixels->w;
-			mHeight = mSurfacePixels->h;
-		}
-
-		// Get rid of old loaded surface
-		SDL_FreeSurface(mSurfacePixels);
-		mSurfacePixels = NULL;
-	}
-
-	// Return success
-	return mTexture != NULL;
 }
 
 #if defined(SDL_TTF_MAJOR_VERSION)
@@ -259,7 +158,7 @@ bool LTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor
 bool LTexture::createBlank(int width, int height)
 {
 	// Get rid of preexisting texture
-	free();
+	// free();
 
 	// Create uninitialized texture
 	mTexture = SDL_CreateTexture(ctx.getRenderer(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
@@ -295,23 +194,11 @@ void LTexture::free()
 	}
 }
 
-void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
-{
-	// Modulate texture rgb
-	SDL_SetTextureColorMod(mTexture, red, green, blue);
-}
 
-void LTexture::setBlendMode(SDL_BlendMode blending)
-{
-	// Set blending function
-	SDL_SetTextureBlendMode(mTexture, blending);
-}
 
-void LTexture::setAlpha(Uint8 alpha)
-{
-	// Modulate texture alpha
-	SDL_SetTextureAlphaMod(mTexture, alpha);
-}
+
+
+
 
 void LTexture::render(int x, int y, SDL_Rect *clip, double angle, SDL_Point *center, SDL_RendererFlip flip)
 {
@@ -329,137 +216,7 @@ void LTexture::render(int x, int y, SDL_Rect *clip, double angle, SDL_Point *cen
 	SDL_RenderCopyEx(ctx.getRenderer(), mTexture, clip, &renderQuad, angle, center, flip);
 }
 
-int LTexture::getWidth()
-{
-	return mWidth;
-}
 
-int LTexture::getHeight()
-{
-	return mHeight;
-}
-
-Uint32 *LTexture::getPixels32()
-{
-	Uint32 *pixels = NULL;
-
-	if (mSurfacePixels != NULL)
-	{
-		pixels = static_cast<Uint32 *>(mSurfacePixels->pixels);
-	}
-
-	return pixels;
-}
-
-Uint32 LTexture::getPixel32(Uint32 x, Uint32 y)
-{
-	// Convert the pixels to 32 bit
-	Uint32 *pixels = static_cast<Uint32 *>(mSurfacePixels->pixels);
-
-	// Get the pixel requested
-	return pixels[(y * getPitch32()) + x];
-}
-
-Uint32 LTexture::getPitch32()
-{
-	Uint32 pitch = 0;
-
-	if (mSurfacePixels != NULL)
-	{
-		pitch = mSurfacePixels->pitch / 4;
-	}
-
-	return pitch;
-}
-
-Uint32 LTexture::mapRGBA(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-{
-	Uint32 pixel = 0;
-
-	if (mSurfacePixels != NULL)
-	{
-		pixel = SDL_MapRGBA(mSurfacePixels->format, r, g, b, a);
-	}
-
-	return pixel;
-}
-
-bool LTexture::lockTexture()
-{
-	bool success = true;
-
-	// Texture is already locked
-	SDL_Rect rect{0, 0, 64, 64};
-
-	if (SDL_LockTexture(mTexture, &rect, &mRawPixels, &mRawPitch) != 0)
-	{
-		printf("Unable to lock texture! %s\n", SDL_GetError());
-		success = false;
-	}
-
-	return success;
-}
-
-bool LTexture::unlockTexture()
-{
-	bool success = true;
-
-	// Texture is not locked
-	if (mRawPixels == NULL)
-	{
-		printf("Texture is not locked!\n");
-		success = false;
-	}
-	// Unlock texture
-	else
-	{
-		SDL_UnlockTexture(mTexture);
-		mRawPixels = NULL;
-		mRawPitch = 0;
-	}
-
-	return success;
-}
-
-void LTexture::copyRawPixels32(void *pixels)
-{
-
-	//   char str1[] = "Пример строки";
-	//   char str2[40];
-	//   char str3[60];
-
-	//   memcpy (str2, str1, strlen(str1)+1);               // копируем строку str1  и сохраняем в str2
-	//   memcpy (str3, "Копирование успешно выполнено",60); // копируем 60 байт строки и сохраняем в str3
-
-	// Texture is locked
-	if (mRawPixels != NULL)
-	{
-		// Copy to locked pixels
-
-		// pixels
-		Uint32 *pixelsArr = (Uint32 *)pixels;
-		// Uint32* colorkey = SDL_MapRGB( gStreamingTexture.mSurfacePixels, 0, 0xFF, 0xFF );
-		// pixelsArr[0];
-		// std::string mess = std::to_string(pixelsArr[0]) + " res :";
-		Uint8 r = 0;
-		Uint8 g = 128;
-		Uint8 b = 0;
-		Uint8 a = 255;
-
-		auto pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
-
-		Uint32 hzRes = SDL_MapRGBA(pixelFormat, r, g, b, a);
-
-		for (int i = 0; i < 64 * 64; i++)
-		{
-			pixelsArr[i] = hzRes;
-		}
-		// printf(mess.c_str());
-		memcpy(mRawPixels, pixels, mRawPitch * mHeight);
-		// std::string ggg = std::to_string(mRawPitch) + " ";
-		// printf(ggg.c_str()); 256
-	}
-}
 
 // 0xFF0000FF red
 // 0x0000FFFF blue
@@ -510,22 +267,7 @@ void DataStream::free()
 	}
 }
 
-void *DataStream::getBuffer()
-{
-	--mDelayFrames;
-	if (mDelayFrames == 0)
-	{
-		++mCurrentImage;
-		mDelayFrames = 4;
-	}
 
-	if (mCurrentImage == 4)
-	{
-		mCurrentImage = 0;
-	}
-
-	return mImages[mCurrentImage]->pixels;
-}
 
 // bool init()
 // {
@@ -597,11 +339,11 @@ bool loadMedia()
 	}
 
 	// Load data stream
-	if (!gDataStream.loadMediaData())
-	{
-		printf("Unable to load data stream!\n");
-		success = false;
-	}
+	// if (!gDataStream.loadMediaData())
+	// {
+	// 	printf("Unable to load data stream!\n");
+	// 	success = false;
+	// }
 
 	return success;
 }
@@ -661,9 +403,6 @@ int main(int argc, char *args[])
 		// gStreamingTexture.unlockTexture();
 
 		// Render frame
-		gStreamingTexture.render(
-			(ctx.SCREEN_WIDTH - gStreamingTexture.getWidth()) / 2,
-			(ctx.SCREEN_HEIGHT - gStreamingTexture.getHeight()) / 2);
 
 		//////////////////////////////////////////////////////
 		//  ctx.FillRect(0, 0, 150, 150, "red");
@@ -731,6 +470,10 @@ int main(int argc, char *args[])
 		mRawPixels2 = NULL;
 		mRawPitch2 = 0;
 
+		gStreamingTexture.render(
+			0,
+			0);
+
 		ctx.End();
 		x++;
 		x == 800 ? x = 0 : x = x;
@@ -738,8 +481,8 @@ int main(int argc, char *args[])
 	}
 	ctx.Close();
 
-	// delete image;
-	// image = nullptr;
+	delete image;
+	image = nullptr;
 	// delete test;
 	// test = nullptr;
 	return 0;
