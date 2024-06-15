@@ -75,7 +75,7 @@ public:
 
 private:
 	// Internal data
-	SDL_Surface *mImages[4];
+	SDL_Surface *mImages[1];
 	int mCurrentImage;
 	int mDelayFrames;
 };
