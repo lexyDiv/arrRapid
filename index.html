@@ -6,28 +6,31 @@
     <title>Document</title>
   </head>
   <body>
-    <script>
-      class Unit {
-        constructor(type) {
-          this.type = type;
-        }
-      }
+    <canvas id="canvas" width="800" height="600"></canvas>
 
-      function go() {
-        let arr = [];
-        const LENGTH = 10000;
-        for (let i = 0; i < LENGTH; i++) {
-          arr.push(new Unit(i));
-        }
-        let arr2 = arr.filter((unit) => unit.type % 2 === 0);
-        arr = [];
-        arr2 = [];
-      }
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.strokeStyle = "black";
+      ctx.strokeRect(0, 0, width, height);
+
+      const point = { x: 30, y: 30 };
 
       setInterval(() => {
-        go();
-        console.log("all deleted");
+        
+        for(let i = 0; i < 30000; i++)
+        {
+            ctx.fillRect(point.x, point.y, 5, 5);
+        }
+
+        point.x++;
       }, 20);
+
+
     </script>
   </body>
 </html>
