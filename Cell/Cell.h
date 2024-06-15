@@ -8,11 +8,11 @@ public:
     int x;
     int y;
     int gab;
-    std::string color;
+    Color color;
    // Color col;
    // std::string color33 = "vvvv";
     Cell();
-    Cell(int x, int y, int gab, std::string color);
+    Cell(int x, int y, int gab, Color color);
     void draw(int index, int ver);
 };
 

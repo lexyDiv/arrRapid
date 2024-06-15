@@ -3,7 +3,7 @@
 
 Cell::Cell(){};
 
-Cell::Cell(int x, int y, int gab, std::string color)
+Cell::Cell(int x, int y, int gab, Color color)
 {
     this->x = x;
     this->y = y;

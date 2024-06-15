@@ -37,6 +37,7 @@ public:
 	void forEach(function<void(T item, int index)> fn);
 	void forEach(function<void(T item)> fn);
 	int indexOf(T item);
+	int getLength();
 
 	T &getItem(int index)
 	{
@@ -251,6 +252,11 @@ inline int rapid<T>::indexOf(T item)
 		}
 	}
 	return -1;
+}
+template <typename T>
+inline int rapid<T>::getLength()
+{
+    return this->length;
 };
 
 template <typename T>

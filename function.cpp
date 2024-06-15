@@ -1,7 +1,5 @@
 #include "Cell/Cell.cpp"
 
-rapid<rapid<Cell *> *> *arr = new rapid<rapid<Cell *> *>;
-
 std::string testMap[] = {
 
     "00000000000000s0000000000000000000000000000tttttttttttttttttttttt",
@@ -70,8 +68,10 @@ std::string testMap[] = {
     "00000000000000000000000000000000000000000001111111111111111111111",
     "000000000000000000000000000000000000000000t1111111111111111111111"};
 
+rapid<rapid<Cell *> *> *arr = new rapid<rapid<Cell *> *>;
+Image* image = new Image("src/zombi.png");
 
-    void getField()
+void getField()
 {
 
     //      std::string strL = std::to_string(testMap->size()) + " ";
@@ -86,16 +86,38 @@ std::string testMap[] = {
         for (int k = 0; k < 65; k++)
         {
             char lit = testMap[i][k];
-            Color color;
+            Color color{0, 0, 0};
             if (lit == '0')
             {
                 color = ctx.ColorsMap("green");
             }
+            else if (lit == 'g')
+            {
+                color = ctx.ColorsMap("violet");
+            }
+            else if (lit == 't' || lit == '1')
+            {
+                color = ctx.ColorsMap("dgreen");
+            }
+            else if (lit == 'w')
+            {
+                color = ctx.ColorsMap("blue");
+            }
+            else if (lit == 'S')
+            {
+                color = ctx.ColorsMap("yellow");
+            }
 
-            // Cell *cell = new Cell(k + 600, i, 2, "dd");
-            // arr->getItem(i)->push(cell);
+            Cell *cell = new Cell(k + 600, i, 2, color);
+            arr->getItem(i)->push(cell);
         }
         arr->getItem(i)->norm();
     }
     arr->norm();
+
+    // std::string log = " length = " + std::to_string(arr->getItem(0)->getLength());
+    // Color color = arr->getItem(0)->getItem(0)->color;
+    // std::string log2 = " color = " + std::to_string(color.G);
+    // printf(log.c_str());
+    // printf(log2.c_str());
 }

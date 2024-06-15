@@ -1,11 +1,5 @@
 ﻿#include "function.cpp"
 
-
-
-
-
-
-
 class LTexture
 {
 public:
@@ -85,7 +79,7 @@ public:
 	DataStream();
 
 	// Loads initial data
-	bool loadMedia();
+	bool loadMediaData();
 
 	// Deallocator
 	void free();
@@ -168,7 +162,7 @@ bool LTexture::loadPixelsFromFile(std::string path)
 	SDL_Surface *loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL)
 	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+		printf("Unable to load image %s! SDL_image Error 1: %s\n", path.c_str(), IMG_GetError());
 	}
 	else
 	{
@@ -322,7 +316,7 @@ void LTexture::setAlpha(Uint8 alpha)
 void LTexture::render(int x, int y, SDL_Rect *clip, double angle, SDL_Point *center, SDL_RendererFlip flip)
 {
 	// Set rendering space and render to screen
-	SDL_Rect renderQuad = {x, y, mWidth, mHeight};
+	SDL_Rect renderQuad = {600, 30, 200, 200};
 
 	// Set clip rendering dimensions
 	if (clip != NULL)
@@ -395,7 +389,7 @@ bool LTexture::lockTexture()
 	bool success = true;
 
 	// Texture is already locked
-	SDL_Rect rect{0, 0, 64, 205};
+	SDL_Rect rect{0, 0, 64, 64};
 
 	if (SDL_LockTexture(mTexture, &rect, &mRawPixels, &mRawPitch) != 0)
 	{
@@ -456,7 +450,7 @@ void LTexture::copyRawPixels32(void *pixels)
 
 		Uint32 hzRes = SDL_MapRGBA(pixelFormat, r, g, b, a);
 
-		for (int i = 0; i < 64 * 205; i++)
+		for (int i = 0; i < 64 * 64; i++)
 		{
 			pixelsArr[i] = hzRes;
 		}
@@ -481,28 +475,28 @@ DataStream::DataStream()
 	mDelayFrames = 4;
 }
 
-bool DataStream::loadMedia()
+bool DataStream::loadMediaData()
 {
 	bool success = true;
 
-	for (int i = 0; i < 4; ++i)
+	// for (int i = 0; i < 4; ++i)
+	///{
+	std::stringstream path;
+	path << "src/map" << ".png";
+
+	SDL_Surface *loadedSurface = IMG_Load(path.str().c_str());
+	if (loadedSurface == NULL)
 	{
-		std::stringstream path;
-		path << "src/foo_walk_" << i << ".png";
-
-		SDL_Surface *loadedSurface = IMG_Load(path.str().c_str());
-		if (loadedSurface == NULL)
-		{
-			printf("Unable to load %s! SDL_image error: %s\n", path.str().c_str(), IMG_GetError());
-			success = false;
-		}
-		else
-		{
-			mImages[i] = SDL_ConvertSurfaceFormat(loadedSurface, SDL_PIXELFORMAT_RGBA8888, 0);
-		}
-
-		SDL_FreeSurface(loadedSurface);
+		printf("Unable to load %s! SDL_image error 2: %s\n", path.str().c_str(), IMG_GetError());
+		success = false;
 	}
+	else
+	{
+		mImages[0] = SDL_ConvertSurfaceFormat(loadedSurface, SDL_PIXELFORMAT_RGBA8888, 0);
+	}
+
+	SDL_FreeSurface(loadedSurface);
+	//}
 
 	return success;
 }
@@ -596,14 +590,14 @@ bool loadMedia()
 	bool success = true;
 
 	// Load blank texture
-	if (!gStreamingTexture.createBlank(64, 205))
+	if (!gStreamingTexture.createBlank(64, 64))
 	{
 		printf("Failed to create streaming texture!\n");
 		success = false;
 	}
 
 	// Load data stream
-	if (!gDataStream.loadMedia())
+	if (!gDataStream.loadMediaData())
 	{
 		printf("Unable to load data stream!\n");
 		success = false;
@@ -637,7 +631,7 @@ int main(int argc, char *args[])
 		printf("Failed to load media!\n");
 	}
 
-  //  getField();
+	getField();
 
 	int ver = 0;
 
@@ -645,6 +639,7 @@ int main(int argc, char *args[])
 	SDL_Event e;
 	double conor = 0;
 	int x = 200;
+	auto pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
 	while (!quit)
 	{
 		// Handle events on queue
@@ -665,91 +660,87 @@ int main(int argc, char *args[])
 		// gStreamingTexture.copyRawPixels32(gDataStream.getBuffer());
 		// gStreamingTexture.unlockTexture();
 
-		SDL_Rect rect{0, 0, 64, 205};
-		void *mRawPixels2;
-		int mRawPitch2;
-		SDL_LockTexture(gStreamingTexture.mTexture, &rect, &mRawPixels2, &mRawPitch2);
-		Uint32 *pixelsArr = (Uint32 *)mRawPixels2;
-
-		Uint8 r = 127;
-		Uint8 g = 0;
-		Uint8 b = 255;
-		Uint8 a = 255;
-		auto pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
-		Uint32 hzRes = SDL_MapRGBA(pixelFormat, r, g, b, a);
-		for (int i = 0; i < 64 * 205; i++)
-		{
-			pixelsArr[i] = hzRes;
-		}
-
-		SDL_UnlockTexture(gStreamingTexture.mTexture);
-		mRawPixels2 = NULL;
-		mRawPitch2 = 0;
-
 		// Render frame
 		gStreamingTexture.render(
 			(ctx.SCREEN_WIDTH - gStreamingTexture.getWidth()) / 2,
 			(ctx.SCREEN_HEIGHT - gStreamingTexture.getHeight()) / 2);
 
 		//////////////////////////////////////////////////////
-           ctx.FillRect(0, 0, 150, 150, "red");
-		// SDL_Rect rect;
-		// rect.x = 0;
-		// rect.y = 0;
-		// rect.h = 600;
-		// rect.w = 600;
-		// SDL_RenderSetClipRect(ctx.getRenderer(),
-		// 					  &rect);
-		// ctx.FillRect(0, 0, 600, 600, "white");
+		//  ctx.FillRect(0, 0, 150, 150, "red");
+		SDL_Rect rect2;
+		rect2.x = 0;
+		rect2.y = 0;
+		rect2.h = 600;
+		rect2.w = 600;
+		SDL_RenderSetClipRect(ctx.getRenderer(),
+							  &rect2);
+		ctx.FillRect(0, 0, 600, 600, "white");
 
-		// ctx.DrawImage(image, 0, 0, 1536 / 6, 256, 100, 100, 300, 300);
+		ctx.DrawImage(image, 0, 0, 1536 / 6, 256, x, 100, 300, 300);
+
 		// ctx.DrawImage(test, 0, 0, 200, 300, 0, 0, 200, 300);
 
-		// SDL_Rect rect2;
-		// rect2.x = 600;
-		// rect2.y = 300;
-		// rect2.w = 200;
-		// rect2.h = 600;
-		// SDL_RenderSetClipRect(ctx.getRenderer(),
-		// 					  &rect2);
-		// ctx.FillRect(600, 300, 200, 600, "blue");
+		SDL_Rect rect5;
+		rect5.x = 600;
+		rect5.y = 300;
+		rect5.w = 200;
+		rect5.h = 600;
+		SDL_RenderSetClipRect(ctx.getRenderer(),
+							  &rect5);
+		ctx.FillRect(600, 300, 200, 600, "black");
 		// ///////////////////////////////////////////
-		// SDL_Rect rect3;
-		// rect3.x = 600;
-		// rect3.y = 0;
-		// rect3.w = 200;
-		// rect3.h = 300;
-		// SDL_RenderSetClipRect(ctx.getRenderer(),
-		// 					  &rect3);
-		// // ctx.FillRect(600, 0, 200, 300, "green", 50);
-		// if (x == 200)
-		// {
-		// 	arr->forEach([ver](rapid<Cell *> *line)
-		// 				 { line->forEach([ver](Cell *cell, int index)
-		// 								 { cell->draw(index, ver); }); });
-		// }
-		// else
-		// {
+		SDL_Rect rect3;
+		rect3.x = 600;
+		rect3.y = 0;
+		rect3.w = 200;
+		rect3.h = 300;
+		SDL_RenderSetClipRect(ctx.getRenderer(),
+							  &rect3);
+		// ctx.FillRect(600, 0, 200, 300, "green", 50);
 
-		// 	arr->getItem(ver)->forEach([ver](Cell *cell, int index)
-		// 							   { cell->draw(index, ver); });
-		// }
+		SDL_Rect rect{0, 0, 64, 64};
+		void *mRawPixels2;
+		int mRawPitch2;
+		SDL_LockTexture(gStreamingTexture.mTexture, &rect, &mRawPixels2, &mRawPitch2);
+		Uint32 *pixelsArr = (Uint32 *)mRawPixels2;
 
-		// ver++;
-		// if (ver == 300)
-		// {
-		// 	ver = 0;
-		// }
+		// i = 0; i < 64 * 205;
+		int index = ver * 64;
+		int hor = 0;
+		for (int i = index; i < index + 64; i++)
+		{
+			Color color = arr->getItem(ver)->getItem(hor)->color;
+			hor++;
+			Uint8 r = color.R;
+			Uint8 g = color.G;
+			Uint8 b = color.B;
+			Uint8 a = 255;
+
+			Uint32 hzRes = SDL_MapRGBA(pixelFormat, r, g, b, a);
+
+			pixelsArr[i] = hzRes;
+		}
+
+		ver++;
+		if (ver == 64)
+		{
+			ver = 0;
+		}
+
+		SDL_UnlockTexture(gStreamingTexture.mTexture);
+		mRawPixels2 = NULL;
+		mRawPitch2 = 0;
 
 		ctx.End();
-	
+		x++;
+		x == 800 ? x = 0 : x = x;
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 	ctx.Close();
-	
-	//delete image;
-	//image = nullptr;
-	//delete test;
-	//test = nullptr;
+
+	// delete image;
+	// image = nullptr;
+	// delete test;
+	// test = nullptr;
 	return 0;
 }
