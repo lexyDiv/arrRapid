@@ -1,11 +1,7 @@
 ﻿#include "function.cpp"
 
-
-
 int main(int argc, char *args[])
 {
-
-
 
 	getField();
 
@@ -14,7 +10,8 @@ int main(int argc, char *args[])
 	bool quit = false;
 	SDL_Event e;
 	double conor = 0;
-	int x = 200;
+    float x = 200;
+	int ax = 0;
 	auto pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
 	while (!quit)
 	{
@@ -30,7 +27,8 @@ int main(int argc, char *args[])
 
 		ctx.ClearRect(0, 0, 800, 600);
 
-	
+		ctx.FillRect(100, 100, 200, 200, "blue");
+
 		SDL_Rect rect2;
 		rect2.x = 0;
 		rect2.y = 0;
@@ -62,28 +60,39 @@ int main(int argc, char *args[])
 							  &rect3);
 		// ctx.FillRect(600, 0, 200, 300, "green", 50);
 
-		SDL_Rect rect{0, 0, 64, 64};
-		void *mRawPixels2;
-		int mRawPitch2;
-		SDL_LockTexture(miniMap->mTexture, &rect, &mRawPixels2, &mRawPitch2);
-		Uint32 *pixelsArr = (Uint32 *)mRawPixels2;
-
-		// i = 0; i < 64 * 205;
 		int index = ver * 64;
 		int hor = 0;
-		for (int i = index; i < index + 64; i++)
-		{
-			Color color = arr->getItem(ver)->getItem(hor)->color;
-			hor++;
-			Uint8 r = color.R;
-			Uint8 g = color.G;
-			Uint8 b = color.B;
-			Uint8 a = 255;
 
-			Uint32 hzRes = SDL_MapRGBA(pixelFormat, r, g, b, a);
+		ctx.PixelHendler(miniMap, 0, ver, 64, 1, [ver](Uint32 *pixelsArr, SDL_PixelFormat *pixelFormat)
+						 { arr->getItem(ver)->forEach([pixelsArr, pixelFormat](Cell *cell, int index)
+													  {
+														  pixelsArr;
+														  pixelFormat;
+														  Color color = cell->color;
+														  Uint8 r = color.R;
+														  Uint8 g = color.G;
+														  Uint8 b = color.B;
+														  Uint8 a = cell->A;
+														  Uint32 hzRes = SDL_MapRGBA(pixelFormat, r, g, b, a);
+														  pixelsArr[index] = hzRes; }); }
 
-			pixelsArr[i] = hzRes;
-		}
+		);
+
+		// SDL_Rect rect{0, ver, 64, 1};
+		// void *mRawPixels;
+		// int mRawPitch;
+		// SDL_LockTexture(miniMap->mTexture, &rect, &mRawPixels, &mRawPitch);
+		// Uint32 *pixelsArr = (Uint32 *)mRawPixels;
+
+		// arr->getItem(ver)->forEach([pixelFormat, pixelsArr](Cell* cell, int index){
+		//     Color color = cell->color;
+		//     Uint8 r = color.R;
+		//     Uint8 g = color.G;
+		//     Uint8 b = color.B;
+		//     Uint8 a = 255;
+		// 	Uint32 hzRes = SDL_MapRGBA(pixelFormat, r, g, b, a);
+		// 	pixelsArr[index] = hzRes;
+		// });
 
 		ver++;
 		if (ver == 64)
@@ -91,9 +100,9 @@ int main(int argc, char *args[])
 			ver = 0;
 		}
 
-		SDL_UnlockTexture(miniMap->mTexture);
-		mRawPixels2 = NULL;
-		mRawPitch2 = 0;
+		// SDL_UnlockTexture(miniMap->mTexture);
+		// mRawPixels = NULL;
+		// mRawPitch = 0;
 
 		// gStreamingTexture.render(
 		// 	0,
@@ -101,9 +110,10 @@ int main(int argc, char *args[])
 		ctx.DrawImage(miniMap, 0, 0, 64, 64, 600, 30, 200, 200);
 
 		ctx.End();
-		x++;
+
+		x+= 2;
 		x == 800 ? x = 0 : x = x;
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 	ctx.Close();
 

@@ -9,12 +9,11 @@ struct Color
     int B;
 };
 
-
-
 class Context
 {
 public:
-SDL_Window *gWindow = nullptr;
+    SDL_PixelFormat *pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
+    SDL_Window *gWindow = nullptr;
     Context(int SCREEN_WIDTH, int SCREEN_HEIGHT);
     Color ColorsMap(std::string color);
     void Close();
@@ -27,6 +26,12 @@ SDL_Window *gWindow = nullptr;
     void FillRect(int x, int y, int width, int height, std::string color);
     void FillRect(int x, int y, int width, int height);
     void FillRect(int x, int y, int width, int height, std::string color, int A);
+    void PixelHendler(Image *image,
+                      int x,
+                      int y,
+                      int width,
+                      int height,
+                      function<void(Uint32 *pixelsArr, SDL_PixelFormat *pixelFormat)> fn);
     void DrawImage(Image *image,
                    int animX,
                    int animY,
@@ -105,6 +110,7 @@ SDL_Window *gWindow = nullptr;
 public:
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
-    
+    void *mRawPixels = nullptr;
+    int mRawPitch = 0;
     SDL_Renderer *gRenderer = nullptr;
 };
