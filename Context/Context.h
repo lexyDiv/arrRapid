@@ -23,9 +23,17 @@ public:
     SDL_Renderer *getRenderer();
     void FillRect(int x, int y, int width, int height, int R, int G, int B, int A);
     void FillRect(int x, int y, int width, int height, int R, int G, int B);
+    void FillRect(int x, int y, int width, int height, std::string color, int A);
     void FillRect(int x, int y, int width, int height, std::string color);
     void FillRect(int x, int y, int width, int height);
-    void FillRect(int x, int y, int width, int height, std::string color, int A);
+
+    void StrokeRect(int x, int y, int width, int height, int R, int G, int B, int A);
+    void StrokeRect(int x, int y, int width, int height, int R, int G, int B);
+    void StrokeRect(int x, int y, int width, int height, std::string color, int A);
+    void StrokeRect(int x, int y, int width, int height, std::string color);
+    void StrokeRect(int x, int y, int width, int height);
+    
+
     void PixelHendler(Image *image,
                       int x,
                       int y,

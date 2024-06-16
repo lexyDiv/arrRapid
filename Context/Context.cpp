@@ -27,9 +27,9 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
                                          SDL_WINDOWPOS_UNDEFINED,
                                          this->SCREEN_WIDTH,
                                          this->SCREEN_HEIGHT,
-                                         SDL_WINDOW_OPENGL 
-                                        // | SDL_WINDOW_FULLSCREEN
-                                         );
+                                         SDL_WINDOW_OPENGL
+                                         // | SDL_WINDOW_FULLSCREEN
+        );
         if (this->gWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -161,7 +161,6 @@ void Context::FillRect(int x, int y, int width, int height, int R, int G, int B,
     SDL_SetRenderDrawColor(this->getRenderer(), R, G, B, A);
     SDL_Rect rect = {x, y, width, height};
     SDL_RenderFillRect(this->getRenderer(), &rect);
-    // SDL_SetRenderDrawBlendMode(this->getRenderer(), SDL_BLENDMODE_NONE);
 }
 
 void Context::FillRect(int x, int y, int width, int height, int R, int G, int B)
@@ -193,6 +192,44 @@ void Context::FillRect(int x, int y, int width, int height, std::string color, i
     SDL_SetRenderDrawColor(this->getRenderer(), c.R, c.G, c.B, A);
     SDL_Rect rect = {x, y, width, height};
     SDL_RenderFillRect(this->getRenderer(), &rect);
+}
+
+void Context::StrokeRect(int x, int y, int width, int height, int R, int G, int B, int A)
+{
+    SDL_SetRenderDrawBlendMode(this->getRenderer(), SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(this->getRenderer(), R, G, B, A);
+    SDL_Rect rect = {x, y, width, height};
+    SDL_RenderDrawRect(this->gRenderer, &rect);
+}
+
+void Context::StrokeRect(int x, int y, int width, int height, int R, int G, int B)
+{
+    SDL_SetRenderDrawColor(this->getRenderer(), R, G, B, 255);
+    SDL_Rect rect = {x, y, width, height};
+    SDL_RenderDrawRect(this->gRenderer, &rect);
+}
+
+void Context::StrokeRect(int x, int y, int width, int height, std::string color, int A)
+{
+    Color c = this->ColorsMap(color);
+    SDL_SetRenderDrawColor(this->getRenderer(), c.R, c.G, c.B, A);
+    SDL_Rect rect = {x, y, width, height};
+    SDL_RenderDrawRect(this->gRenderer, &rect);
+}
+
+void Context::StrokeRect(int x, int y, int width, int height, std::string color)
+{
+    Color c = this->ColorsMap(color);
+    SDL_SetRenderDrawColor(this->getRenderer(), c.R, c.G, c.B, 255);
+    SDL_Rect rect = {x, y, width, height};
+    SDL_RenderDrawRect(this->gRenderer, &rect);
+}
+
+void Context::StrokeRect(int x, int y, int width, int height)
+{
+    SDL_SetRenderDrawColor(this->getRenderer(), 0, 0, 0, 255);
+    SDL_Rect rect = {x, y, width, height};
+    SDL_RenderDrawRect(this->gRenderer, &rect);
 }
 
 void Context::PixelHendler(Image *image,

@@ -40,7 +40,13 @@ int main(int argc, char *args[])
 
 		ctx.DrawImage(image, 0, 0, 1536 / 6, 256, x, 100, 300, 300);
 
-		// ctx.DrawImage(test, 0, 0, 200, 300, 0, 0, 200, 300);
+		ctx.FillRect(10, 10, 50, 50, "blue");
+
+		ctx.StrokeRect(70, 70, 100, 100, 0, 0, 0, 255);
+		ctx.StrokeRect(100, 100, 50, 50, 100, 0, 255);
+		ctx.StrokeRect(150, 150, 50, 50, "red", 255);
+		ctx.StrokeRect(200, 200, 50, 50, "red");
+		ctx.StrokeRect(250, 250, 50, 50);
 
 		SDL_Rect rect5;
 		rect5.x = 600;
