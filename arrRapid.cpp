@@ -25,46 +25,16 @@ int main(int argc, char *args[])
 			}
 		}
 
+		
 		ctx.ClearRect(0, 0, 800, 600);
 
-		ctx.FillRect(100, 100, 200, 200, "blue");
 
-		SDL_Rect rect2;
-		rect2.x = 0;
-		rect2.y = 0;
-		rect2.h = 600;
-		rect2.w = 600;
-		SDL_RenderSetClipRect(ctx.getRenderer(),
-							  &rect2);
-		ctx.FillRect(0, 0, 600, 600, "white");
+		ctx.CreateDrawZone(0, 0, 600, 600);
+		ctx.FillRect(0, 0, 600, 600, "yellow");
 
 		ctx.DrawImage(image, 0, 0, 1536 / 6, 256, x, 100, 300, 300);
 
-		ctx.FillRect(10, 10, 50, 50, "blue");
-
-		ctx.StrokeRect(70, 70, 100, 100, 0, 0, 0, 255);
-		ctx.StrokeRect(100, 100, 50, 50, 100, 0, 255);
-		ctx.StrokeRect(150, 150, 50, 50, "red", 255);
-		ctx.StrokeRect(200, 200, 50, 50, "red");
-		ctx.StrokeRect(250, 250, 50, 50);
-
-		SDL_Rect rect5;
-		rect5.x = 600;
-		rect5.y = 300;
-		rect5.w = 200;
-		rect5.h = 600;
-		SDL_RenderSetClipRect(ctx.getRenderer(),
-							  &rect5);
-		ctx.FillRect(600, 300, 200, 600, "black");
-		// ///////////////////////////////////////////
-		SDL_Rect rect3;
-		rect3.x = 600;
-		rect3.y = 0;
-		rect3.w = 200;
-		rect3.h = 300;
-		SDL_RenderSetClipRect(ctx.getRenderer(),
-							  &rect3);
-		// ctx.FillRect(600, 0, 200, 300, "green", 50);
+		ctx.CreateDrawZone(600, 0, 200, 600);
 
 		int index = ver * 64;
 		int hor = 0;
@@ -84,35 +54,12 @@ int main(int argc, char *args[])
 
 		);
 
-		// SDL_Rect rect{0, ver, 64, 1};
-		// void *mRawPixels;
-		// int mRawPitch;
-		// SDL_LockTexture(miniMap->mTexture, &rect, &mRawPixels, &mRawPitch);
-		// Uint32 *pixelsArr = (Uint32 *)mRawPixels;
-
-		// arr->getItem(ver)->forEach([pixelFormat, pixelsArr](Cell* cell, int index){
-		//     Color color = cell->color;
-		//     Uint8 r = color.R;
-		//     Uint8 g = color.G;
-		//     Uint8 b = color.B;
-		//     Uint8 a = 255;
-		// 	Uint32 hzRes = SDL_MapRGBA(pixelFormat, r, g, b, a);
-		// 	pixelsArr[index] = hzRes;
-		// });
-
 		ver++;
 		if (ver == 64)
 		{
 			ver = 0;
 		}
-
-		// SDL_UnlockTexture(miniMap->mTexture);
-		// mRawPixels = NULL;
-		// mRawPitch = 0;
-
-		// gStreamingTexture.render(
-		// 	0,
-		// 	0);
+		
 		ctx.DrawImage(miniMap, 0, 0, 64, 64, 600, 30, 200, 200);
 
 		ctx.End();

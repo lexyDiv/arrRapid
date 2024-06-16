@@ -155,6 +155,17 @@ SDL_Renderer *Context::getRenderer()
     return this->gRenderer;
 }
 
+void Context::CreateDrawZone(int x, int y, int width, int height)
+{
+    SDL_Rect rect;
+    rect.x = x;
+    rect.y = y;
+    rect.h = height;
+    rect.w = width;
+    SDL_RenderSetClipRect(this->gRenderer,
+                          &rect);
+}
+
 void Context::FillRect(int x, int y, int width, int height, int R, int G, int B, int A)
 {
     SDL_SetRenderDrawBlendMode(this->getRenderer(), SDL_BLENDMODE_BLEND);
