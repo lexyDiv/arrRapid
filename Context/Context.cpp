@@ -166,6 +166,39 @@ void Context::CreateDrawZone(int x, int y, int width, int height)
                           &rect);
 }
 
+void Context::DrawLine(Point start, Point finish, int R, int G, int B, int A)
+{
+    SDL_SetRenderDrawBlendMode(this->getRenderer(), SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(this->getRenderer(), R, G, B, A);
+    SDL_RenderDrawLine(this->gRenderer, start.x, start.y, finish.x, finish.y);
+}
+
+void Context::DrawLine(Point start, Point finish, int R, int G, int B)
+{
+    SDL_SetRenderDrawColor(this->getRenderer(), R, G, B, 255);
+    SDL_RenderDrawLine(this->gRenderer, start.x, start.y, finish.x, finish.y);
+}
+
+void Context::DrawLine(Point start, Point finish, string color, int A)
+{
+    Color c = this->ColorsMap(color);
+    SDL_SetRenderDrawColor(this->getRenderer(), c.R, c.G, c.B, A);
+    SDL_RenderDrawLine(this->gRenderer, start.x, start.y, finish.x, finish.y);
+}
+
+void Context::DrawLine(Point start, Point finish, string color)
+{
+    Color c = this->ColorsMap(color);
+    SDL_SetRenderDrawColor(this->getRenderer(), c.R, c.G, c.B, 255);
+    SDL_RenderDrawLine(this->gRenderer, start.x, start.y, finish.x, finish.y);
+}
+
+void Context::DrawLine(Point start, Point finish)
+{
+    SDL_SetRenderDrawColor(this->getRenderer(), 0, 0, 0, 255);
+    SDL_RenderDrawLine(this->gRenderer, start.x, start.y, finish.x, finish.y);
+}
+
 void Context::FillRect(int x, int y, int width, int height, int R, int G, int B, int A)
 {
     SDL_SetRenderDrawBlendMode(this->getRenderer(), SDL_BLENDMODE_BLEND);
