@@ -21,6 +21,9 @@ public:
     void ClearRect(int x, int y, int width, int height);
     void End();
     SDL_Renderer *getRenderer();
+
+    void CreateDrawZone(int x, int y, int width, int height);
+
     void FillRect(int x, int y, int width, int height, int R, int G, int B, int A);
     void FillRect(int x, int y, int width, int height, int R, int G, int B);
     void FillRect(int x, int y, int width, int height, std::string color, int A);
