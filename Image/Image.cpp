@@ -1,6 +1,5 @@
 #include "Image.h"
 
-
 Image::Image(std::string path)
 {
 	// Initialize
@@ -8,6 +7,15 @@ Image::Image(std::string path)
 	mWidth = 0;
 	mHeight = 0;
 	this->loadFromFile(path, gRenderer);
+}
+
+Image::Image(int width, int height)
+{
+	this->mTexture = SDL_CreateTexture(this->gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+	if (this->mTexture == NULL)
+	{
+		printf("Unable to create streamable blank texture! SDL Error: %s\n", SDL_GetError());
+	}
 }
 
 Image::~Image()

@@ -70,6 +70,7 @@ std::string testMap[] = {
 
 rapid<rapid<Cell *> *> *arr = new rapid<rapid<Cell *> *>;
 Image* image = new Image("src/zombi.png");
+Image* miniMap = new Image(64, 64);
 
 void getField()
 {

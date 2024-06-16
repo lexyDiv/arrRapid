@@ -22,14 +22,14 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
         }
 
         // Create window SDL_WINDOW_FULLSCREEN  SDL_WINDOW_OPENGL
-        this->gWindow = SDL_CreateWindow("SDL Tutorial", 
-        SDL_WINDOWPOS_UNDEFINED, 
-        SDL_WINDOWPOS_UNDEFINED, 
-        this->SCREEN_WIDTH, 
-        this->SCREEN_HEIGHT, 
-        SDL_WINDOW_OPENGL
-         | SDL_WINDOW_FULLSCREEN
-         );
+        this->gWindow = SDL_CreateWindow("SDL Tutorial",
+                                         SDL_WINDOWPOS_UNDEFINED,
+                                         SDL_WINDOWPOS_UNDEFINED,
+                                         this->SCREEN_WIDTH,
+                                         this->SCREEN_HEIGHT,
+                                         SDL_WINDOW_OPENGL 
+                                        // | SDL_WINDOW_FULLSCREEN
+                                         );
         if (this->gWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -47,7 +47,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
             else
             {
                 // Initialize renderer color
-               // SDL_SetRenderDrawColor(this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                // SDL_SetRenderDrawColor(this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
                 // Initialize PNG loading
                 int imgFlags = IMG_INIT_PNG;
@@ -63,6 +63,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
     if (!success)
     {
         this->Close();
+        printf("this is pisya");
     };
 }
 
@@ -109,13 +110,25 @@ Color Context::ColorsMap(std::string color)
 
 void Context::Close()
 {
-    SDL_DestroyRenderer(this->gRenderer);
-    SDL_DestroyWindow(this->gWindow);
-    this->gWindow = NULL;
-    this->gRenderer = NULL;
+    try
+    {
+        SDL_DestroyRenderer(this->gRenderer);
+        SDL_DestroyWindow(this->gWindow);
+        this->gWindow = NULL;
+        this->gRenderer = NULL;
 
-    IMG_Quit();
-    SDL_Quit();
+        mRawPixels = nullptr;
+        delete pixelFormat;
+        pixelFormat = nullptr;
+
+        IMG_Quit();
+        SDL_Quit();
+    }
+    catch (const std::exception &e)
+    {
+        printf("delete is faled!");
+    }
+    printf(" all deleted ");
 }
 
 void Context::ClearRect()
@@ -180,6 +193,26 @@ void Context::FillRect(int x, int y, int width, int height, std::string color, i
     SDL_SetRenderDrawColor(this->getRenderer(), c.R, c.G, c.B, A);
     SDL_Rect rect = {x, y, width, height};
     SDL_RenderFillRect(this->getRenderer(), &rect);
+}
+
+void Context::PixelHendler(Image *image,
+                           int x,
+                           int y,
+                           int width,
+                           int height,
+                           function<void(Uint32 *pixelsArr, SDL_PixelFormat *pixelFormat)> fn)
+{
+    SDL_Rect rect{x, y, width, height};
+    // void *mRawPixels;
+    // int mRawPitch;
+    SDL_LockTexture(image->mTexture, &rect, &this->mRawPixels, &this->mRawPitch);
+    Uint32 *pixelsArr = (Uint32 *)this->mRawPixels;
+
+    fn(pixelsArr, this->pixelFormat);
+
+    SDL_UnlockTexture(image->mTexture);
+    this->mRawPixels = NULL;
+    this->mRawPitch = 0;
 }
 
 void Context::DrawImage(Image *image,
@@ -310,7 +343,8 @@ void Context::DrawImage(Image *image,
 Context::~Context()
 {
     this->Close();
+    printf(" here ");
 }
 
- Context ctx(800, 600);
- SDL_Renderer *Image::gRenderer = ctx.getRenderer();
+Context ctx(800, 600);
+SDL_Renderer *Image::gRenderer = ctx.getRenderer();
