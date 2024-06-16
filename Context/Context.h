@@ -9,6 +9,12 @@ struct Color
     int B;
 };
 
+struct Point
+{
+    float x;
+    float y;
+};
+
 class Context
 {
 public:
@@ -24,6 +30,12 @@ public:
 
     void CreateDrawZone(int x, int y, int width, int height);
 
+    void DrawLine(Point start, Point finish, int R, int G, int B, int A);
+    void DrawLine(Point start, Point finish, int R, int G, int B);
+    void DrawLine(Point start, Point finish, string color, int A);
+    void DrawLine(Point start, Point finish, string color);
+    void DrawLine(Point start, Point finish);
+
     void FillRect(int x, int y, int width, int height, int R, int G, int B, int A);
     void FillRect(int x, int y, int width, int height, int R, int G, int B);
     void FillRect(int x, int y, int width, int height, std::string color, int A);
@@ -35,7 +47,6 @@ public:
     void StrokeRect(int x, int y, int width, int height, std::string color, int A);
     void StrokeRect(int x, int y, int width, int height, std::string color);
     void StrokeRect(int x, int y, int width, int height);
-    
 
     void PixelHendler(Image *image,
                       int x,
