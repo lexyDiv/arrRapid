@@ -12,7 +12,7 @@ int main(int argc, char *args[])
 	double conor = 0;
     float x = 200;
 	int ax = 0;
-	auto pixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
+    Point arrPoints[]{{300, 300}, {400, 400}};
 	while (!quit)
 	{
 		// Handle events on queue
@@ -34,11 +34,7 @@ int main(int argc, char *args[])
 
 		ctx.DrawImage(image, 0, 0, 1536 / 6, 256, x, 100, 300, 300);
 
-		ctx.DrawLine({10, 10}, {100, 100}, 0, 0, 0, 255);
-		ctx.DrawLine({10, 20}, {100, 100}, 0, 0, 0);
-		ctx.DrawLine({250, 150}, {150, 150}, "red", 255);
-		ctx.DrawLine({250, 150}, {350, 350}, "green");
-		ctx.DrawLine({350, 350}, {450, 450});
+		
 
 		ctx.CreateDrawZone(600, 0, 200, 600);
 

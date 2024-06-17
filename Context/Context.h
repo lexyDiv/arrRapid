@@ -35,6 +35,7 @@ public:
     void DrawLine(Point start, Point finish, string color, int A);
     void DrawLine(Point start, Point finish, string color);
     void DrawLine(Point start, Point finish);
+    void DrawHendleFigure(Point arrPoint[], Point rotPoint);
 
     void FillRect(int x, int y, int width, int height, int R, int G, int B, int A);
     void FillRect(int x, int y, int width, int height, int R, int G, int B);
