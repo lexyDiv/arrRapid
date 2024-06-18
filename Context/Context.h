@@ -11,8 +11,8 @@ struct Color
 
 struct Point
 {
-    float x;
-    float y;
+    int x;
+    int y;
 };
 
 class Context
@@ -35,6 +35,7 @@ public:
     void DrawLine(Point start, Point finish, string color, int A);
     void DrawLine(Point start, Point finish, string color);
     void DrawLine(Point start, Point finish);
+    void DrawHendleFigure(Point arrPoints[], Point rotPoint, int length, float conor, string color);
 
     void FillRect(int x, int y, int width, int height, int R, int G, int B, int A);
     void FillRect(int x, int y, int width, int height, int R, int G, int B);
@@ -127,6 +128,13 @@ public:
                    int alpha,
                    int rotX,
                    int rotY);
+
+    class conorDelta
+    {
+    public:
+        float conor;
+        float delta;
+    };
     ~Context();
 
 public:

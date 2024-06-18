@@ -1,16 +1,5 @@
 #pragma once
-
-#include <functional>
-#include <set>
-#include <algorithm>
-#include <bits/stdc++.h>
-#include <thread>
-#include <chrono>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <stdio.h>
-#include <string>
-#include <cmath>
+#include "rand.h"
 
 using namespace std;
 
