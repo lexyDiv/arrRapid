@@ -50,7 +50,7 @@ int main(int argc, char *args[])
 		ctx.FillRect(0, 0, 600, 600, "yellow");
 		ctx.DrawImage(image, 0, 0, 1536 / 6, 256, x, 100, 300, 300);
 
-		ctx.DrawHendleFigure(arrPoints, {170, 130}, 4, conor);
+		ctx.DrawHendleFigure(arrPoints, {170, 130}, 4, conor, "violet");
 		// ctx.DrawLine({200, 300}, {250, 400}, "blue");
 
 		ctx.CreateDrawZone(600, 0, 200, 600);
