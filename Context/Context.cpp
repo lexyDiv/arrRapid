@@ -28,7 +28,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
                                          this->SCREEN_WIDTH,
                                          this->SCREEN_HEIGHT,
                                          SDL_WINDOW_OPENGL
-                                         // | SDL_WINDOW_FULLSCREEN
+                                        //  | SDL_WINDOW_FULLSCREEN
         );
         if (this->gWindow == NULL)
         {
@@ -197,6 +197,31 @@ void Context::DrawLine(Point start, Point finish)
 {
     SDL_SetRenderDrawColor(this->getRenderer(), 0, 0, 0, 255);
     SDL_RenderDrawLine(this->gRenderer, start.x, start.y, finish.x, finish.y);
+}
+
+void Context::DrawHendleFigure(Point arrPoints[], Point rotPoint, int length, float conor, string color)
+{
+    Point points[length];
+    double rad = conor * (M_PI / 180);
+    for (int i = 0; i < length; i++)
+    {
+        Point point = arrPoints[i];
+        float deltaX = rotPoint.x - point.x;
+        float deltaY = rotPoint.y - point.y;
+        float delta = sqrt(deltaX * deltaX + deltaY * deltaY);
+        float conorData = atan2(deltaY, deltaX);
+        int x = rotPoint.x + cos(conorData + rad) * -delta;
+        int y = rotPoint.y + sin(conorData + rad) * -delta;
+        Point pointData = {x, y};
+        points[i] = pointData;
+    }
+
+    for (int i = 0; i < length; i++)
+    {
+        Point point1 = points[i];
+        Point point2 = i < length - 1 ? points[i + 1] : points[0];
+        this->DrawLine(point1, point2, color);
+    }
 }
 
 void Context::FillRect(int x, int y, int width, int height, int R, int G, int B, int A)
