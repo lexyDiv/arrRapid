@@ -2,6 +2,8 @@
 
 #include "../Image/Image.cpp"
 
+
+
 struct Color
 {
     int R;
@@ -27,6 +29,9 @@ public:
     void ClearRect(int x, int y, int width, int height);
     void End();
     SDL_Renderer *getRenderer();
+    void getFont();
+
+    void DrawText(int x, int y, int size, string str);
 
     void CreateDrawZone(int x, int y, int width, int height);
 
@@ -143,4 +148,5 @@ public:
     void *mRawPixels = nullptr;
     int mRawPitch = 0;
     SDL_Renderer *gRenderer = nullptr;
+    Image * font = nullptr;
 };
