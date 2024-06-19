@@ -28,7 +28,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
                                          this->SCREEN_WIDTH,
                                          this->SCREEN_HEIGHT,
                                          SDL_WINDOW_OPENGL
-                                         //  | SDL_WINDOW_FULLSCREEN
+                                          // | SDL_WINDOW_FULLSCREEN
         );
         if (this->gWindow == NULL)
         {

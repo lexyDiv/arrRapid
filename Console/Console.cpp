@@ -35,6 +35,61 @@ void Console::log(string str)
     this->index++;
 }
 
+void Console::proc(int mX, int mY, bool pressed)
+{
+    bool collision = rect_PointCollision({mX, mY}, {this->x, this->y, this->width, this->height});
+    if (!this->canClick && pressed)
+    {
+        this->canClick = 1;
+        if (collision)
+        {
+            this->canClick = 2;
+        }
+    }
+
+    if (!pressed)
+    {
+        this->clicked = false;
+        this->canClear = true;
+        this->canClick = 0;
+    }
+    this->clearButtonHover = false;
+    if (!this->clicked)
+    {
+        this->hover = false;
+    }
+    if (collision)
+    {
+        this->hover = true;
+
+        if (pressed && this->canClick == 2)
+        {
+            this->clicked = true;
+        }
+    }
+    if (rect_PointCollision({mX, mY}, {this->clearButton.x, this->clearButton.y,
+                                       this->clearButton.w, this->clearButton.h}))
+    {
+        this->clearButtonHover = true;
+        this->clicked = false;
+        if (this->canClear && pressed && this->canClick == 2)
+        {
+            this->canClear = false;
+            this->clear();
+        }
+    }
+    if (this->clicked)
+    {
+        int deltaX = mX - this->saveMouseX;
+        int deltaY = mY - this->saveMouseY;
+        this->x += deltaX;
+        this->y += deltaY;
+        this->clearButton = {this->x + 470, this->y, 30, 15};
+    }
+    this->saveMouseX = mX;
+    this->saveMouseY = mY;
+}
+
 void Console::draw()
 {
     if (this->strArr->getLength())
@@ -42,11 +97,21 @@ void Console::draw()
         int A = this->hover ? 255 : 50;
         ctx.CreateDrawZone(this->x, this->y, this->width, this->height);
         ctx.FillRect(this->x, this->y, this->width, this->height, "white", A);
+        if (this->clicked)
+        {
+            ctx.StrokeRect(this->x, this->y, this->width, this->height, "blue");
+        }
         int x = this->x;
         int y = this->y;
         int index = this->index;
         this->strArr->forEach([x, y, index](saveStr ss, int i)
                               { ctx.DrawText(x + 5, y + i * 15, 15, to_string(ss.index) + ": " + ss.str); });
+        ctx.FillRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "violet", A - 50);
+        ctx.DrawText(this->clearButton.x, this->clearButton.y + 3, 8, "clear");
+        if (this->clearButtonHover)
+        {
+            ctx.StrokeRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "red");
+        }
     }
 }
 

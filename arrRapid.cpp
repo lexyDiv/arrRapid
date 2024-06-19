@@ -3,13 +3,9 @@
 int main(int argc, char *args[])
 {
 
-
-
 	std::srand(time(NULL));
 	ctx.getFont();
 	getField();
-
-
 
 	int ver = 0;
 
@@ -19,10 +15,9 @@ int main(int argc, char *args[])
 	Point *arrPoints = new Point[]{{100, 100}, {100, 200}, {200, 200}, {200, 100}};
 
 	// cout << " " << (char) i;
-    int ticker = 0;
+	int ticker = 0;
 	while (!quit)
 	{
-		
 		// Handle events on queue
 		while (SDL_PollEvent(&e) != 0)
 		{
@@ -31,17 +26,28 @@ int main(int argc, char *args[])
 			{
 				quit = true;
 			}
-			if(e.type == SDL_KEYDOWN)
+			if (e.type == SDL_KEYDOWN)
 			{
-				//console.log(to_string(e.type));
+				// console.log(to_string(e.type));
 			}
-			if(e.type == SDL_MOUSEMOTION)
+			if (e.type == SDL_MOUSEMOTION)
 			{
-				console.log(to_string(e.motion.x));
+				mouse.move(e.motion.x, e.motion.y);
+				// console.log(to_string(e.motion.x));
+			}
+			if (e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				// console.log(to_string(e.button.button)); // 1, 2, 3
+				mouse.pressKey(e.button.button);
+			}
+			if (e.type == SDL_MOUSEBUTTONUP)
+			{
+				// console.log(to_string(e.button.button)); // 1, 2, 3
+				mouse.upKey(e.button.button);
 			}
 		}
-
-	   // console.log(to_string(ticker));
+		console.proc(mouse.x, mouse.y, mouse.leftKey);
+		// console.log(to_string(ticker));
 
 		ctx.ClearRect(0, 0, 800, 600);
 
@@ -83,14 +89,12 @@ int main(int argc, char *args[])
 
 		ctx.End();
 
-
-          ticker++;
-		  if(ticker == 200)
-		  {
+		ticker++;
+		if (ticker == 200)
+		{
 			ticker = 0;
-			//console.clear();
-		  }
-
+			// console.clear();
+		}
 	}
 	ctx.Close();
 
