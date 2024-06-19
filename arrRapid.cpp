@@ -53,18 +53,8 @@ int main(int argc, char *args[])
 			}
 			if (e.type == SDL_MOUSEWHEEL)
 			{
-			//console.log(to_string(e.motion.yrel)); // ok
-			  // down -1082130432
-			  // up 1065353216
+			
 			  console.whellOrder(e.motion.yrel);
-			  if(e.motion.yrel > 0)
-			  {
-				//console.log("scroll up");
-			  }
-			  else
-			  {
-               // console.log("scroll down");
-			  }
 			}
 		}
 		console.proc(mouse.x, mouse.y, mouse.leftKey);

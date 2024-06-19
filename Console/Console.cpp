@@ -104,8 +104,11 @@ void Console::draw()
         int x = this->x;
         int y = this->y;
         int index = this->index;
-        this->strArr->forEach([x, y, index](saveStr ss, int i)
-                              { ctx.DrawText(x + 5, y + i * 15, 15, to_string(ss.index) + ": " + ss.str); });
+        for (int i = this->interval; i < this->interval + 12; i++)
+        {
+            saveStr ss = this->strArr[i];
+            ctx.DrawText(x + 5, y + i * 15, 15, to_string(ss.index) + ": " + ss.str);
+        }
         ctx.FillRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "violet", A - 50);
         ctx.DrawText(this->clearButton.x, this->clearButton.y + 3, 8, "clear");
         if (this->clearButtonHover)
@@ -142,4 +145,4 @@ Console::~Console()
     this->strArr = nullptr;
 };
 
-Console console(20);
+Console console(200);
