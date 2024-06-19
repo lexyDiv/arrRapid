@@ -27,6 +27,7 @@ public:
 	void forEach(function<void(T item)> fn);
 	int indexOf(T item);
 	int getLength();
+	void clear();
 
 	T &getItem(int index)
 	{
@@ -68,6 +69,7 @@ template <typename T>
 inline rapid<T>::~rapid()
 {
 	delete[] this->arr;
+	this->arr = nullptr;
 };
 
 template <typename T>
@@ -246,6 +248,15 @@ template <typename T>
 inline int rapid<T>::getLength()
 {
     return this->length;
+}
+
+template <typename T>
+inline void rapid<T>::clear() {
+	this->length = 0;
+	this->norm();
+	this->left = 0;
+	this->right = 0;
+ 
 };
 
 template <typename T>

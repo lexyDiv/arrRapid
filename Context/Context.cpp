@@ -28,7 +28,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
                                          this->SCREEN_WIDTH,
                                          this->SCREEN_HEIGHT,
                                          SDL_WINDOW_OPENGL
-                                        //  | SDL_WINDOW_FULLSCREEN
+                                          // | SDL_WINDOW_FULLSCREEN
         );
         if (this->gWindow == NULL)
         {
@@ -153,6 +153,23 @@ void Context::End()
 SDL_Renderer *Context::getRenderer()
 {
     return this->gRenderer;
+}
+
+void Context::getFont()
+{
+    this->font = new Image("src/literas_1.png");
+}
+
+void Context::DrawText(int x, int y, int size, string str)
+{
+    int drawX = x;
+    for (int i = 0; i < str.size(); i++)
+    {
+        char litera = str[i];
+        int animX = ((int)litera - 33) * 20;
+        this->DrawImage(this->font, animX, 0, 20, 20, drawX, y, size, size);
+        drawX += size * 0.75;
+    }
 }
 
 void Context::CreateDrawZone(int x, int y, int width, int height)

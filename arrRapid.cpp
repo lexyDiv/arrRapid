@@ -2,36 +2,20 @@
 
 int main(int argc, char *args[])
 {
-	std::srand(time(NULL));
 
+	std::srand(time(NULL));
+	ctx.getFont();
 	getField();
 
 	int ver = 0;
 
 	bool quit = false;
 	SDL_Event e;
-	double conor = 0;
-	float x = 200;
-	int y = 300;
-	int speedY = 1;
-	int ax = 0;
 
 	Point *arrPoints = new Point[]{{100, 100}, {100, 200}, {200, 200}, {200, 100}};
 
-	// int number = intRand(2, 5000);
-	// Point *arrPoints = new Point[number]{};
-	// for (int i = 0; i < number; i++)
-	// {
-	// 	arrPoints[i] = {intRand(0, 600), intRand(0, 600)};
-	// }
-
-	// for (int i = 0; i < number; i++)
-	// {
-	// 	string res = " i = " + to_string(i) + "( " + "x = " + to_string(arrPoints[i].x) + " y = " + to_string(arrPoints[i].y) + ")";
-	// 	printf(res.c_str());
-	// }
-	// printf(to_string(number).c_str());
-
+	// cout << " " << (char) i;
+	int ticker = 0;
 	while (!quit)
 	{
 		// Handle events on queue
@@ -42,16 +26,38 @@ int main(int argc, char *args[])
 			{
 				quit = true;
 			}
+			if (e.type == SDL_KEYDOWN)
+			{
+				// console.log(to_string(e.type));
+			}
+			if (e.type == SDL_MOUSEMOTION)
+			{
+				mouse.move(e.motion.x, e.motion.y);
+				// console.log(to_string(e.motion.x));
+			}
+			if (e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				// console.log(to_string(e.button.button)); // 1, 2, 3
+				mouse.pressKey(e.button.button);
+			}
+			if (e.type == SDL_MOUSEBUTTONUP)
+			{
+				// console.log(to_string(e.button.button)); // 1, 2, 3
+				mouse.upKey(e.button.button);
+			}
 		}
+		console.proc(mouse.x, mouse.y, mouse.leftKey);
+		// console.log(to_string(ticker));
 
 		ctx.ClearRect(0, 0, 800, 600);
 
 		ctx.CreateDrawZone(0, 0, 600, 600);
 		ctx.FillRect(0, 0, 600, 600, "yellow");
-		ctx.DrawImage(image, 0, 0, 1536 / 6, 256, x, 100, 300, 300);
 
-		ctx.DrawHendleFigure(arrPoints, {170, 130}, 4, conor, "violet");
-		// ctx.DrawLine({200, 300}, {250, 400}, "blue");
+		ctx.DrawText(10, 10, 30, "W@%");
+		ctx.DrawText(10, 50, 50, "Papa loh!");
+		ctx.DrawText(10, 100, 15, "Papa loh!");
+		ctx.DrawText(10, 150, 15, "Earth Worm Jim");
 
 		ctx.CreateDrawZone(600, 0, 200, 600);
 		int index = ver * 64;
@@ -75,17 +81,20 @@ int main(int argc, char *args[])
 		{
 			ver = 0;
 		}
+		ctx.FillRect(600, 0, 200, 600, "white", 255);
+		ctx.FillRect(600, 0, 200, 600, "blue", 100);
 		ctx.DrawImage(miniMap, 0, 0, 64, 64, 600, 30, 200, 200);
+
+		console.draw();
 
 		ctx.End();
 
-		x += 2;
-		x == 800 ? x = 0 : x = x;
-		conor += 1;
-		// y += speedY;
-		// if(y <= 0 || y > 600)
-		// {speedY = -speedY;}
-		// std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		ticker++;
+		if (ticker == 200)
+		{
+			ticker = 0;
+			// console.clear();
+		}
 	}
 	ctx.Close();
 
