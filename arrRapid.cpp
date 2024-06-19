@@ -14,7 +14,13 @@ int main(int argc, char *args[])
 
 	Point *arrPoints = new Point[]{{100, 100}, {100, 200}, {200, 200}, {200, 100}};
 
-	// cout << " " << (char) i;
+	
+    // for(int i = 0; i < 10; i++)
+	// {
+	// 	console.log("Papa mega super loh!!!");
+	// }
+
+
 	int ticker = 0;
 	while (!quit)
 	{
@@ -44,6 +50,21 @@ int main(int argc, char *args[])
 			{
 				// console.log(to_string(e.button.button)); // 1, 2, 3
 				mouse.upKey(e.button.button);
+			}
+			if (e.type == SDL_MOUSEWHEEL)
+			{
+			//console.log(to_string(e.motion.yrel)); // ok
+			  // down -1082130432
+			  // up 1065353216
+			  console.whellOrder(e.motion.yrel);
+			  if(e.motion.yrel > 0)
+			  {
+				//console.log("scroll up");
+			  }
+			  else
+			  {
+               // console.log("scroll down");
+			  }
 			}
 		}
 		console.proc(mouse.x, mouse.y, mouse.leftKey);

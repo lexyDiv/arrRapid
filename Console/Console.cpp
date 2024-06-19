@@ -115,6 +115,27 @@ void Console::draw()
     }
 }
 
+void Console::whellOrder(int vector)
+{
+    int l = this->strArr->getLength();
+    if (l > 12)
+    {
+        if (vector > 0 && this->interval)
+        {
+            this->interval--;
+        }
+        else if (vector < 0 && this->interval + 12 < l)
+        {
+            this->interval++;
+        }
+    }
+    else
+    {
+        this->interval = 0;
+    }
+    this->log(to_string(this->interval));
+}
+
 Console::~Console()
 {
     delete this->strArr;

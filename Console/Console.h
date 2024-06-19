@@ -24,6 +24,7 @@ public:
     void log(string str);
     void proc(int mX, int mY, bool pressed);
     void draw();
+    void whellOrder(int vector);
     ~Console();
 
 private:
@@ -41,6 +42,7 @@ private:
     int index = 0;
     bool canClear = true;
     int canClick = 0;
+    int interval = 0;
     void delArr();
 };
 
