@@ -42,7 +42,7 @@ void Console::proc(int mX, int mY, bool pressed)
 
     bool collision = rect_PointCollision({mX, mY}, {this->x, this->y, this->width, this->height});
     this->clearButtonHover = rect_PointCollision({mX, mY},
-                                              {this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h});
+                                                 {this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h});
     this->hover = false;
 
     if (!pressed && this->clickDataStatus)
@@ -58,18 +58,16 @@ void Console::proc(int mX, int mY, bool pressed)
                                             {this->x, this->y, this->width - 30, this->height});
         this->canClear = rect_PointCollision(this->ClickData, this->clearButton);
     }
-    
-    if(this->canClear)
+
+    if (this->canClear)
     {
         this->clear();
     }
-   
 
     if ((collision && !this->clickDataStatus) || this->clicked)
     {
         this->hover = true;
     }
-    
 
     if (this->clicked)
     {
@@ -113,7 +111,7 @@ void Console::draw()
             ctx.StrokeRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "red");
         }
     }
-    if (this->strArr->getLength() > 12)
+    if (this->strArr->getLength() >= 12)
     {
         this->drawSB(A);
     }
@@ -148,17 +146,27 @@ void Console::drawSB(int A)
 void Console::procSB()
 {
     scrollBar = {this->x + 470, this->y + 15, 30, 165};
-    scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, 165};
     int l = this->strArr->getLength();
+    int h;
+    if (l <= 12)
+    {
+        h = 165;
+    }
+    else
+    {
+        int more = l - 12;
+        h = (12 * 165) / l;
+        h = h > 5 ? h : 5;
+    }
+    scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, h};
 
-    if(!this->stopAutoScroll && l > 12)
+    if (!this->stopAutoScroll && l > 12)
     {
         this->interval = l - 12;
     }
-    else if(this->interval + 12 == l && this->stopAutoScroll > 0)
+    else if (this->interval + 12 == l && this->stopAutoScroll > 0)
     {
-       // this->log("this is dno");
-       this->stopAutoScroll--;
+        this->stopAutoScroll--;
     }
 }
 
