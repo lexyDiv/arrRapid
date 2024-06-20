@@ -24,6 +24,8 @@ public:
     void log(string str);
     void proc(int mX, int mY, bool pressed);
     void draw();
+    void drawSB(int A);
+    void procSB();
     void whellOrder(int vector);
     ~Console();
 
@@ -34,12 +36,16 @@ private:
     int x = 10;
     int y = 410;
     SDL_Rect clearButton = {this->x + 470, this->y, 30, 15};
+    SDL_Rect scrollBar = {this->x + 470, this->y + 15, 30, 165};
+    SDL_Rect scrollRunner = {this->x + 470, this->y + 15, 30, 30};
+    Image *runner = new Image("src/runner.png");
+    int scrollRunnerIndex = 0;
     bool clearButtonHover = false;
     int saveMouseX = 0;
     int saveMouseY = 0;
     int width = 500;
     int height = 180;
-    int index = 0;
+    int index = 1;
     bool canClear = true;
     int canClick = 0;
     int interval = 0;

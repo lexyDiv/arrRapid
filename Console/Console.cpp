@@ -10,7 +10,7 @@ void Console::delArr()
 {
     this->strArr->clear();
     this->strArr->backForce(length);
-    this->index = 0;
+    this->index = 1;
 }
 
 void Console::clear()
@@ -88,13 +88,14 @@ void Console::proc(int mX, int mY, bool pressed)
     }
     this->saveMouseX = mX;
     this->saveMouseY = mY;
+    this->procSB();
 }
 
 void Console::draw()
 {
+    int A = this->hover ? 255 : 50;
     if (this->strArr->getLength())
     {
-        int A = this->hover ? 255 : 50;
         ctx.CreateDrawZone(this->x, this->y, this->width, this->height);
         ctx.FillRect(this->x, this->y, this->width, this->height, "white", A);
         if (this->clicked)
@@ -109,7 +110,7 @@ void Console::draw()
         for (int i = this->interval; i < this->interval + delta; i++)
         {
             saveStr ss = this->strArr->getItem(i);
-            ctx.DrawText(x + 5, y + iter * 15, 15, to_string(ss.index) + ": " + ss.str);
+            ctx.DrawText(x + 5, y + iter * 15, 15, to_string(ss.index) + ": " + ss.str, A);
             iter++;
         }
         ctx.FillRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "violet", A - 50);
@@ -119,6 +120,42 @@ void Console::draw()
             ctx.StrokeRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "red");
         }
     }
+    if (this->strArr->getLength() > 12)
+    {
+        this->drawSB(A);
+    }
+}
+
+void Console::drawSB(int A)
+{
+    ctx.StrokeRect(
+        this->scrollBar.x,
+        this->scrollBar.y,
+        this->scrollBar.w,
+        this->scrollBar.h,
+        "violet", A);
+    ctx.StrokeRect(this->scrollRunner.x,
+                  this->scrollRunner.y,
+                  this->scrollRunner.w,
+                  this->scrollRunner.h, 
+                  "blue", 
+                  A);
+    ctx.DrawImage(this->runner,
+                  0,
+                  0,
+                  512,
+                  512,
+                  this->scrollRunner.x,
+                  this->scrollRunner.y,
+                  this->scrollRunner.w,
+                  this->scrollRunner.h,
+                  SDL_FLIP_NONE, 90, A);
+}
+
+void Console::procSB()
+{
+    scrollBar = {this->x + 470, this->y + 15, 30, 165};
+    scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, 30};
 }
 
 void Console::whellOrder(int vector)
