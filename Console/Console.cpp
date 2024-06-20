@@ -11,6 +11,7 @@ void Console::delArr()
     this->strArr->clear();
     this->strArr->backForce(length);
     this->index = 1;
+    this->interval = 0;
 }
 
 void Console::clear()
@@ -18,6 +19,7 @@ void Console::clear()
     if (this->strArr != nullptr)
     {
         this->delArr();
+        this->canClear = false;
     }
 }
 
@@ -140,13 +142,13 @@ void Console::drawSB(int A)
                   this->scrollRunner.y,
                   this->scrollRunner.w,
                   this->scrollRunner.h,
-                  SDL_FLIP_NONE, 90, A);
+                  SDL_FLIP_NONE, 0, A);
 }
 
 void Console::procSB()
 {
     scrollBar = {this->x + 470, this->y + 15, 30, 165};
-    scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, 30};
+    scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, 165};
     int l = this->strArr->getLength();
 
     if(!this->stopAutoScroll && l > 12)

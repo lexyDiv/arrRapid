@@ -15,10 +15,10 @@ int main(int argc, char *args[])
 	Point *arrPoints = new Point[]{{100, 100}, {100, 200}, {200, 200}, {200, 100}};
 
 	
-    // for(int i = 0; i < 22; i++)
-	// {
-	// 	console.log("Papa mega super loh!!!");
-	// }
+    for(int i = 0; i < 12; i++)
+	{
+		console.log("Papa mega super loh!!!");
+	}
 
 
 	int ticker = 0;
@@ -60,7 +60,7 @@ int main(int argc, char *args[])
 		console.proc(mouse.x, mouse.y, mouse.leftKey);
 		 if(ticker % 10 == 0)
 		 {
-			console.log(to_string(ticker));
+			//console.log(to_string(ticker));
 		 }
 
 		ctx.ClearRect(0, 0, 800, 600);
@@ -68,10 +68,7 @@ int main(int argc, char *args[])
 		ctx.CreateDrawZone(0, 0, 600, 600);
 		ctx.FillRect(0, 0, 600, 600, "yellow");
 
-		ctx.DrawText(10, 10, 30, "W@%");
-		ctx.DrawText(10, 50, 50, "Papa loh!");
-		ctx.DrawText(10, 100, 15, "Papa loh!");
-		ctx.DrawText(10, 150, 15, "Earth Worm Jim");
+		ctx.DrawImage(image, 0, 0, 1536 / 6, 256, 100, 100, 300, 300);
 
 		ctx.CreateDrawZone(600, 0, 200, 600);
 		int index = ver * 64;
