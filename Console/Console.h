@@ -26,7 +26,7 @@ public:
     void draw();
     void drawSB(int A);
     void procSB();
-    void procRunner();
+    void procRunner(int mX, int mY);
     void whellOrder(int vector);
     ~Console();
 
@@ -48,6 +48,7 @@ private:
     bool clearButtonHover = false;
     bool runnerHover = false;
     bool runnerTake = false;
+    Point runnerTakePoint = {-1, -1};
     int saveMouseX = 0;
     int saveMouseY = 0;
     int width = 500;

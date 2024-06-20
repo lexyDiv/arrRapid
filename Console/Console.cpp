@@ -64,18 +64,25 @@ void Console::proc(int mX, int mY, bool pressed)
         this->canClear = rect_PointCollision(this->ClickData, this->clearButton);
         this->clickRunnerZone = rect_PointCollision(this->ClickData, this->scrollBar);
         this->runnerTake = rect_PointCollision({mX, mY},
-                                            {this->scrollRunner.x,
-                                             this->scrollRunner.y,
-                                             this->scrollRunner.w,
-                                             this->scrollRunner.h});
+                                               {this->scrollBar.x,
+                                                this->scrollBar.y,
+                                                this->scrollBar.w,
+                                                this->scrollBar.h});
+        // this->runnerTakePoint = {-1, -1};
+        if (this->runnerTake)
+        {
+            this->runnerTakePoint = {mX, mY};
+            this->stopAutoScroll = 5;
+        }
     }
 
     this->runnerHover = ((collision && !this->clickDataStatus) &&
-                        rect_PointCollision({mX, mY},
-                                            {this->scrollRunner.x,
-                                             this->scrollRunner.y,
-                                             this->scrollRunner.w,
-                                             this->scrollRunner.h}) || this->runnerTake);
+                             rect_PointCollision({mX, mY},
+                                                 {this->scrollBar.x,
+                                                  this->scrollBar.y,
+                                                  this->scrollBar.w,
+                                                  this->scrollBar.h}) ||
+                         this->runnerTake);
 
     if (this->canClear)
     {
@@ -98,7 +105,7 @@ void Console::proc(int mX, int mY, bool pressed)
     this->saveMouseX = mX;
     this->saveMouseY = mY;
     this->procSB();
-    this->procRunner();
+    this->procRunner(mX, mY);
 }
 
 void Console::draw()
@@ -186,7 +193,7 @@ void Console::procSB()
     }
     this->scrollRunner.h = h;
     this->scrollRunner.x = this->x + 470;
-    // scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, h};
+   
 
     if (!this->stopAutoScroll && l > 12)
     {
@@ -196,20 +203,36 @@ void Console::procSB()
     {
         this->stopAutoScroll--;
     }
-   // this->log(to_string(this->runnerTake));
+    // this->log(to_string(this->runnerTake));
 }
 
-void Console::procRunner()
+void Console::procRunner(int mX, int mY)
 {
     int l = this->strArr->getLength();
     int ind = l - 12;
     int deltaInterval = ind - this->interval;
     int way = 165 - this->scrollRunner.h;
-    // this->log("deltaInterval" + to_string(deltaInterval));
+
+    if (this->runnerTake)
+    {
+        this->stopAutoScroll = 1;
+        int deltaY = mY - this->scrollBar.y; 
+        this->interval = (deltaY * l) / (165 + this->scrollRunner.h);
+
+       
+        if (this->interval < 0)
+        {
+            this->interval = 0;
+        }
+        else if(this->interval > ind)
+        {
+            this->interval = ind;
+        }
+    }
+
     if (!deltaInterval)
     {
         this->scrollRunner.y = (this->y + 15 + 165) - this->scrollRunner.h;
-        // this->log("here");
     }
     else if (!this->interval)
     {
@@ -219,8 +242,6 @@ void Console::procRunner()
     {
         this->scrollRunner.y = this->y + 15 + (way * this->interval) / ind;
     }
-    // this->log(" y = " + to_string(this->scrollRunner.y));
-    // this->log("way = " + to_string(way));
 }
 
 void Console::whellOrder(int vector)
@@ -231,7 +252,7 @@ void Console::whellOrder(int vector)
         if (vector > 0 && this->interval)
         {
             this->interval--;
-            this->stopAutoScroll = 5;
+            this->stopAutoScroll = 1;
         }
         else if (vector < 0 && this->interval + 12 < l)
         {
@@ -240,7 +261,7 @@ void Console::whellOrder(int vector)
     }
     else
     {
-        this->interval = 0;
+       // this->interval = 0;
     }
 }
 
@@ -250,4 +271,4 @@ Console::~Console()
     this->strArr = nullptr;
 };
 
-Console console(2000);
+Console console(10000);
