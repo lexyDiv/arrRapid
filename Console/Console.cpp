@@ -39,16 +39,21 @@ void Console::log(string str)
 
 void Console::proc(int mX, int mY, bool pressed)
 {
-
     bool collision = rect_PointCollision({mX, mY}, {this->x, this->y, this->width, this->height});
     this->clearButtonHover = rect_PointCollision({mX, mY},
-                                                 {this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h});
+                                                 {this->clearButton.x,
+                                                  this->clearButton.y,
+                                                  this->clearButton.w,
+                                                  this->clearButton.h});
+
     this->hover = false;
 
     if (!pressed && this->clickDataStatus)
     {
         this->clickDataStatus = false;
         this->clicked = false;
+        this->clickRunnerZone = false;
+        this->runnerTake = false;
     }
     if (pressed && !this->clickDataStatus)
     {
@@ -57,14 +62,27 @@ void Console::proc(int mX, int mY, bool pressed)
         this->clicked = rect_PointCollision(this->ClickData,
                                             {this->x, this->y, this->width - 30, this->height});
         this->canClear = rect_PointCollision(this->ClickData, this->clearButton);
+        this->clickRunnerZone = rect_PointCollision(this->ClickData, this->scrollBar);
+        this->runnerTake = rect_PointCollision({mX, mY},
+                                            {this->scrollRunner.x,
+                                             this->scrollRunner.y,
+                                             this->scrollRunner.w,
+                                             this->scrollRunner.h});
     }
+
+    this->runnerHover = ((collision && !this->clickDataStatus) &&
+                        rect_PointCollision({mX, mY},
+                                            {this->scrollRunner.x,
+                                             this->scrollRunner.y,
+                                             this->scrollRunner.w,
+                                             this->scrollRunner.h}) || this->runnerTake);
 
     if (this->canClear)
     {
         this->clear();
     }
 
-    if ((collision && !this->clickDataStatus) || this->clicked)
+    if ((collision && !this->clickDataStatus) || this->clicked || this->clickRunnerZone)
     {
         this->hover = true;
     }
@@ -80,6 +98,7 @@ void Console::proc(int mX, int mY, bool pressed)
     this->saveMouseX = mX;
     this->saveMouseY = mY;
     this->procSB();
+    this->procRunner();
 }
 
 void Console::draw()
@@ -131,6 +150,13 @@ void Console::drawSB(int A)
                    this->scrollRunner.h,
                    "blue",
                    A);
+    if (this->runnerHover)
+    {
+        ctx.FillRect(this->scrollRunner.x,
+                     this->scrollRunner.y,
+                     this->scrollRunner.w,
+                     this->scrollRunner.h, "blue");
+    }
     ctx.DrawImage(this->runner,
                   0,
                   0,
@@ -158,7 +184,9 @@ void Console::procSB()
         h = (12 * 165) / l;
         h = h > 5 ? h : 5;
     }
-    scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, h};
+    this->scrollRunner.h = h;
+    this->scrollRunner.x = this->x + 470;
+    // scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, h};
 
     if (!this->stopAutoScroll && l > 12)
     {
@@ -168,6 +196,31 @@ void Console::procSB()
     {
         this->stopAutoScroll--;
     }
+   // this->log(to_string(this->runnerTake));
+}
+
+void Console::procRunner()
+{
+    int l = this->strArr->getLength();
+    int ind = l - 12;
+    int deltaInterval = ind - this->interval;
+    int way = 165 - this->scrollRunner.h;
+    // this->log("deltaInterval" + to_string(deltaInterval));
+    if (!deltaInterval)
+    {
+        this->scrollRunner.y = (this->y + 15 + 165) - this->scrollRunner.h;
+        // this->log("here");
+    }
+    else if (!this->interval)
+    {
+        this->scrollRunner.y = this->y + 15;
+    }
+    else
+    {
+        this->scrollRunner.y = this->y + 15 + (way * this->interval) / ind;
+    }
+    // this->log(" y = " + to_string(this->scrollRunner.y));
+    // this->log("way = " + to_string(way));
 }
 
 void Console::whellOrder(int vector)

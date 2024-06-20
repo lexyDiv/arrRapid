@@ -26,6 +26,7 @@ public:
     void draw();
     void drawSB(int A);
     void procSB();
+    void procRunner();
     void whellOrder(int vector);
     ~Console();
 
@@ -42,8 +43,11 @@ private:
     Point ClickData = {-1, -1};
     bool clickDataStatus = false;
     Image *runner = new Image("src/runner.png");
+    bool clickRunnerZone = false;
     int scrollRunnerIndex = 0;
     bool clearButtonHover = false;
+    bool runnerHover = false;
+    bool runnerTake = false;
     int saveMouseX = 0;
     int saveMouseY = 0;
     int width = 500;
