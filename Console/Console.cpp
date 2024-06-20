@@ -146,8 +146,18 @@ void Console::drawSB(int A)
 void Console::procSB()
 {
     scrollBar = {this->x + 470, this->y + 15, 30, 165};
-    
     scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, 30};
+    int l = this->strArr->getLength();
+
+    if(!this->stopAutoScroll && l > 12)
+    {
+        this->interval = l - 12;
+    }
+    else if(this->interval + 12 == l && this->stopAutoScroll > 0)
+    {
+       // this->log("this is dno");
+       this->stopAutoScroll--;
+    }
 }
 
 void Console::whellOrder(int vector)
@@ -158,6 +168,7 @@ void Console::whellOrder(int vector)
         if (vector > 0 && this->interval)
         {
             this->interval--;
+            this->stopAutoScroll = 5;
         }
         else if (vector < 0 && this->interval + 12 < l)
         {

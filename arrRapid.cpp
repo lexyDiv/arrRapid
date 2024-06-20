@@ -58,7 +58,7 @@ int main(int argc, char *args[])
 			}
 		}
 		console.proc(mouse.x, mouse.y, mouse.leftKey);
-		 if(ticker < 2000)
+		 if(ticker % 10 == 0)
 		 {
 			console.log(to_string(ticker));
 		 }
