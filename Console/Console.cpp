@@ -104,10 +104,13 @@ void Console::draw()
         int x = this->x;
         int y = this->y;
         int index = this->index;
-        for (int i = this->interval; i < this->interval + 12; i++)
+        int iter = 0;
+        int delta = this->strArr->getLength() > 12 ? 12 : this->strArr->getLength();
+        for (int i = this->interval; i < this->interval + delta; i++)
         {
-            saveStr ss = this->strArr[i];
-            ctx.DrawText(x + 5, y + i * 15, 15, to_string(ss.index) + ": " + ss.str);
+            saveStr ss = this->strArr->getItem(i);
+            ctx.DrawText(x + 5, y + iter * 15, 15, to_string(ss.index) + ": " + ss.str);
+            iter++;
         }
         ctx.FillRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "violet", A - 50);
         ctx.DrawText(this->clearButton.x, this->clearButton.y + 3, 8, "clear");
@@ -121,7 +124,7 @@ void Console::draw()
 void Console::whellOrder(int vector)
 {
     int l = this->strArr->getLength();
-    if (l > 12)
+    if (l > 12 && this->hover)
     {
         if (vector > 0 && this->interval)
         {
@@ -136,7 +139,6 @@ void Console::whellOrder(int vector)
     {
         this->interval = 0;
     }
-    this->log(to_string(this->interval));
 }
 
 Console::~Console()

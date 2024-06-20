@@ -15,10 +15,10 @@ int main(int argc, char *args[])
 	Point *arrPoints = new Point[]{{100, 100}, {100, 200}, {200, 200}, {200, 100}};
 
 	
-    // for(int i = 0; i < 10; i++)
-	// {
-	// 	console.log("Papa mega super loh!!!");
-	// }
+    for(int i = 0; i < 220; i++)
+	{
+		console.log("Papa mega super loh!!!");
+	}
 
 
 	int ticker = 0;
