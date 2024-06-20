@@ -38,6 +38,9 @@ private:
     SDL_Rect clearButton = {this->x + 470, this->y, 30, 15};
     SDL_Rect scrollBar = {this->x + 470, this->y + 15, 30, 165};
     SDL_Rect scrollRunner = {this->x + 470, this->y + 15, 30, 30};
+    int stopAutoScroll = 0;
+    Point ClickData = {-1, -1};
+    bool clickDataStatus = false;
     Image *runner = new Image("src/runner.png");
     int scrollRunnerIndex = 0;
     bool clearButtonHover = false;
@@ -46,7 +49,7 @@ private:
     int width = 500;
     int height = 180;
     int index = 1;
-    bool canClear = true;
+    bool canClear = false;
     int canClick = 0;
     int interval = 0;
     void delArr();

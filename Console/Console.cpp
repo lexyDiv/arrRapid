@@ -37,47 +37,38 @@ void Console::log(string str)
 
 void Console::proc(int mX, int mY, bool pressed)
 {
-    bool collision = rect_PointCollision({mX, mY}, {this->x, this->y, this->width, this->height});
-    if (!this->canClick && pressed)
-    {
-        this->canClick = 1;
-        if (collision)
-        {
-            this->canClick = 2;
-        }
-    }
 
-    if (!pressed)
+    bool collision = rect_PointCollision({mX, mY}, {this->x, this->y, this->width, this->height});
+    this->clearButtonHover = rect_PointCollision({mX, mY},
+                                              {this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h});
+    this->hover = false;
+
+    if (!pressed && this->clickDataStatus)
     {
+        this->clickDataStatus = false;
         this->clicked = false;
-        this->canClear = true;
-        this->canClick = 0;
     }
-    this->clearButtonHover = false;
-    if (!this->clicked)
+    if (pressed && !this->clickDataStatus)
     {
-        this->hover = false;
+        this->clickDataStatus = true;
+        this->ClickData = {mX, mY};
+        this->clicked = rect_PointCollision(this->ClickData,
+                                            {this->x, this->y, this->width - 30, this->height});
+        this->canClear = rect_PointCollision(this->ClickData, this->clearButton);
     }
-    if (collision)
+    
+    if(this->canClear)
+    {
+        this->clear();
+    }
+   
+
+    if ((collision && !this->clickDataStatus) || this->clicked)
     {
         this->hover = true;
+    }
+    
 
-        if (pressed && this->canClick == 2)
-        {
-            this->clicked = true;
-        }
-    }
-    if (rect_PointCollision({mX, mY}, {this->clearButton.x, this->clearButton.y,
-                                       this->clearButton.w, this->clearButton.h}))
-    {
-        this->clearButtonHover = true;
-        this->clicked = false;
-        if (this->canClear && pressed && this->canClick == 2)
-        {
-            this->canClear = false;
-            this->clear();
-        }
-    }
     if (this->clicked)
     {
         int deltaX = mX - this->saveMouseX;
@@ -135,11 +126,11 @@ void Console::drawSB(int A)
         this->scrollBar.h,
         "violet", A);
     ctx.StrokeRect(this->scrollRunner.x,
-                  this->scrollRunner.y,
-                  this->scrollRunner.w,
-                  this->scrollRunner.h, 
-                  "blue", 
-                  A);
+                   this->scrollRunner.y,
+                   this->scrollRunner.w,
+                   this->scrollRunner.h,
+                   "blue",
+                   A);
     ctx.DrawImage(this->runner,
                   0,
                   0,
@@ -155,6 +146,7 @@ void Console::drawSB(int A)
 void Console::procSB()
 {
     scrollBar = {this->x + 470, this->y + 15, 30, 165};
+    
     scrollRunner = {this->x + 470, this->y + 15 + this->scrollRunnerIndex, 30, 30};
 }
 
@@ -184,4 +176,4 @@ Console::~Console()
     this->strArr = nullptr;
 };
 
-Console console(200);
+Console console(2000);
