@@ -20,21 +20,24 @@ void Console::clear()
     {
         this->delArr();
         this->canClear = false;
+        this->isBlocked = false;
     }
 }
 
 void Console::log(string str)
 {
-    if (this->strArr->getLength() == this->length)
+    int l = this->strArr->getLength();
+    if (l == this->length - 1)
     {
-        this->strArr->norm();
-        this->strArr->shift();
-        this->strArr->norm();
-        this->strArr->backForce(1);
+        str = "Click clear button to continue.";
+        this->isBlocked = true;
     }
-    saveStr item(str, this->index);
-    this->strArr->push(item);
-    this->index++;
+    if (l < this->length)
+    {
+        saveStr item(str, this->index);
+        this->strArr->push(item);
+        this->index++;
+    }
 }
 
 void Console::proc(int mX, int mY, bool pressed)
@@ -68,11 +71,9 @@ void Console::proc(int mX, int mY, bool pressed)
                                                 this->scrollBar.y,
                                                 this->scrollBar.w,
                                                 this->scrollBar.h});
-        // this->runnerTakePoint = {-1, -1};
         if (this->runnerTake)
         {
-            this->runnerTakePoint = {mX, mY};
-            this->stopAutoScroll = 5;
+            this->stopAutoScroll = 1;
         }
     }
 
@@ -104,20 +105,43 @@ void Console::proc(int mX, int mY, bool pressed)
     }
     this->saveMouseX = mX;
     this->saveMouseY = mY;
-    this->procSB();
-    this->procRunner(mX, mY);
+    if (this->strArr->getLength() >= 12)
+    {
+        this->procSB();
+        this->procRunner(mX, mY);
+    };
 }
 
 void Console::draw()
 {
     int A = this->hover ? 255 : 50;
+    int A2 = this->hover ? 150 : 50;
     if (this->strArr->getLength())
     {
+
+        int l = this->strArr->getLength();
+        if (l >= 12)
+        {
+            if (this->interval < 0)
+            {
+                this->interval = 0;
+            }
+            else if (this->interval > l - 12)
+            {
+                this->interval = l - 12;
+            }
+        }
+
         ctx.CreateDrawZone(this->x, this->y, this->width, this->height);
+        
         ctx.FillRect(this->x, this->y, this->width, this->height, "white", A);
         if (this->clicked)
         {
             ctx.StrokeRect(this->x, this->y, this->width, this->height, "blue");
+        }
+        if(this->isBlocked)
+        {
+            ctx.FillRect(this->x, this->y, this->width, this->height, "red", 50);
         }
         int x = this->x;
         int y = this->y;
@@ -130,21 +154,48 @@ void Console::draw()
             ctx.DrawText(x + 5, y + iter * 15, 15, to_string(ss.index) + ": " + ss.str, A);
             iter++;
         }
-        ctx.FillRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "violet", A - 50);
-        ctx.DrawText(this->clearButton.x, this->clearButton.y + 3, 8, "clear");
+        this->scrollBar = {this->x + 470, this->y + 15, 30, 165};
+        ctx.FillRect(this->scrollBar.x,
+                     this->y,
+                     this->scrollBar.w,
+                     this->height,
+                     "white",
+                     A);
+        ctx.FillRect(this->clearButton.x,
+                     this->clearButton.y,
+                     this->clearButton.w,
+                     this->clearButton.h,
+                     "violet",
+                     A2);
+        ctx.DrawText(this->clearButton.x, this->clearButton.y + 3, 8, "clear", A);
         if (this->clearButtonHover)
         {
-            ctx.StrokeRect(this->clearButton.x, this->clearButton.y, this->clearButton.w, this->clearButton.h, "red");
+            ctx.StrokeRect(this->clearButton.x,
+                           this->clearButton.y,
+                           this->clearButton.w,
+                           this->clearButton.h,
+                           "red");
         }
-    }
-    if (this->strArr->getLength() >= 12)
-    {
-        this->drawSB(A);
+        if (this->strArr->getLength() >= 12)
+        {
+            this->drawSB(A);
+        }
+        else
+        {
+            this->scrollBar = {this->x + 470, this->y + 15, 30, 165};
+            ctx.FillRect(this->scrollBar.x,
+                         this->scrollBar.y,
+                         this->scrollBar.w,
+                         this->scrollBar.h,
+                         "black",
+                         30);
+        }
     }
 }
 
 void Console::drawSB(int A)
 {
+
     ctx.StrokeRect(
         this->scrollBar.x,
         this->scrollBar.y,
@@ -152,7 +203,7 @@ void Console::drawSB(int A)
         this->scrollBar.h,
         "violet", A);
     ctx.StrokeRect(this->scrollRunner.x,
-                   this->scrollRunner.y,
+                   this->scrollRunnerDrawY,
                    this->scrollRunner.w,
                    this->scrollRunner.h,
                    "blue",
@@ -160,9 +211,9 @@ void Console::drawSB(int A)
     if (this->runnerHover)
     {
         ctx.FillRect(this->scrollRunner.x,
-                     this->scrollRunner.y,
+                     this->scrollRunnerDrawY,
                      this->scrollRunner.w,
-                     this->scrollRunner.h, "blue");
+                     this->scrollRunner.h, "blue", 50);
     }
     ctx.DrawImage(this->runner,
                   0,
@@ -170,10 +221,13 @@ void Console::drawSB(int A)
                   512,
                   512,
                   this->scrollRunner.x,
-                  this->scrollRunner.y,
+                  this->scrollRunnerDrawY,
                   this->scrollRunner.w,
                   this->scrollRunner.h,
                   SDL_FLIP_NONE, 0, A);
+
+    ctx.DrawLine({this->scrollRunner.x, this->scrollRunner.y},
+                 {this->scrollRunner.x + 30, this->scrollRunner.y}, "red");
 }
 
 void Console::procSB()
@@ -181,19 +235,11 @@ void Console::procSB()
     scrollBar = {this->x + 470, this->y + 15, 30, 165};
     int l = this->strArr->getLength();
     int h;
-    if (l <= 12)
-    {
-        h = 165;
-    }
-    else
-    {
-        int more = l - 12;
-        h = (12 * 165) / l;
-        h = h > 5 ? h : 5;
-    }
+    h = (12 * 165) / l;
+    h = h > 20 ? h : 20;
+
     this->scrollRunner.h = h;
     this->scrollRunner.x = this->x + 470;
-   
 
     if (!this->stopAutoScroll && l > 12)
     {
@@ -203,44 +249,38 @@ void Console::procSB()
     {
         this->stopAutoScroll--;
     }
-    // this->log(to_string(this->runnerTake));
 }
 
 void Console::procRunner(int mX, int mY)
 {
     int l = this->strArr->getLength();
-    int ind = l - 12;
-    int deltaInterval = ind - this->interval;
-    int way = 165 - this->scrollRunner.h;
 
     if (this->runnerTake)
     {
         this->stopAutoScroll = 1;
-        int deltaY = mY - this->scrollBar.y; 
-        this->interval = (deltaY * l) / (165 + this->scrollRunner.h);
+        int deltaY = mY - this->scrollBar.y;
+        this->interval = (deltaY * (l - 11)) / 165;
 
-       
         if (this->interval < 0)
         {
             this->interval = 0;
         }
-        else if(this->interval > ind)
-        {
-            this->interval = ind;
-        }
     }
 
-    if (!deltaInterval)
+    float zoneNum = l - 11;
+    float zoneSize = 165 / zoneNum;
+    float dY = (this->interval * zoneSize) + zoneSize / 2;
+
+    this->scrollRunner.y = this->y + 15 + dY;
+    this->scrollRunnerDrawY = this->scrollRunner.y - this->scrollRunner.h / 2;
+
+    if (this->scrollRunnerDrawY < this->scrollBar.y)
     {
-        this->scrollRunner.y = (this->y + 15 + 165) - this->scrollRunner.h;
+        this->scrollRunnerDrawY = this->scrollBar.y;
     }
-    else if (!this->interval)
+    else if (this->scrollRunnerDrawY + this->scrollRunner.h > this->scrollBar.y + this->scrollBar.h)
     {
-        this->scrollRunner.y = this->y + 15;
-    }
-    else
-    {
-        this->scrollRunner.y = this->y + 15 + (way * this->interval) / ind;
+        this->scrollRunnerDrawY = (this->scrollBar.y + this->scrollBar.h) - this->scrollRunner.h;
     }
 }
 
@@ -259,10 +299,6 @@ void Console::whellOrder(int vector)
             this->interval++;
         }
     }
-    else
-    {
-       // this->interval = 0;
-    }
 }
 
 Console::~Console()
@@ -271,4 +307,4 @@ Console::~Console()
     this->strArr = nullptr;
 };
 
-Console console(10000);
+Console console(10);

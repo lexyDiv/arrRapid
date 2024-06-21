@@ -15,10 +15,10 @@ int main(int argc, char *args[])
 	Point *arrPoints = new Point[]{{100, 100}, {100, 200}, {200, 200}, {200, 100}};
 
 	
-    // for(int i = 0; i < 14; i++)
-	// {
-	// 	console.log("Papa mega super loh!!!");
-	// }
+    for(int i = 0; i < 1; i++)
+	{
+		console.log("Papa mega super loh!!! This is true.");
+	}
 
 
 	int ticker = 0;
@@ -58,9 +58,9 @@ int main(int argc, char *args[])
 			}
 		}
 		console.proc(mouse.x, mouse.y, mouse.leftKey);
-		 if(ticker % 1 == 0)
+		 if(ticker % 40 == 0)
 		 {
-			//console.log(to_string(ticker));
+			console.log(to_string(ticker));
 		 }
 
 		ctx.ClearRect(0, 0, 800, 600);
@@ -101,7 +101,7 @@ int main(int argc, char *args[])
 		ctx.End();
 
 		ticker++;
-		if (ticker == 200)
+		if (ticker == 1000)
 		{
 			ticker = 0;
 			// console.clear();
