@@ -172,6 +172,18 @@ void Context::DrawText(int x, int y, int size, string str)
     }
 }
 
+void Context::DrawText(int x, int y, int size, string str, int A)
+{
+        int drawX = x;
+    for (int i = 0; i < str.size(); i++)
+    {
+        char litera = str[i];
+        int animX = ((int)litera - 33) * 20;
+        this->DrawImage(this->font, animX, 0, 20, 20, drawX, y, size, size, SDL_FLIP_NONE, 0, A);
+        drawX += size * 0.75;
+    }
+}
+
 void Context::CreateDrawZone(int x, int y, int width, int height)
 {
     SDL_Rect rect;

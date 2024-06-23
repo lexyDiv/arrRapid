@@ -32,6 +32,7 @@ public:
     void getFont();
 
     void DrawText(int x, int y, int size, string str);
+    void DrawText(int x, int y, int size, string str, int A);
 
     void CreateDrawZone(int x, int y, int width, int height);
 
