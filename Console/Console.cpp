@@ -133,13 +133,13 @@ void Console::draw()
         }
 
         ctx.CreateDrawZone(this->x, this->y, this->width, this->height);
-        
+
         ctx.FillRect(this->x, this->y, this->width, this->height, "white", A);
         if (this->clicked)
         {
             ctx.StrokeRect(this->x, this->y, this->width, this->height, "blue");
         }
-        if(this->isBlocked)
+        if (this->isBlocked)
         {
             ctx.FillRect(this->x, this->y, this->width, this->height, "red", 50);
         }
@@ -307,4 +307,4 @@ Console::~Console()
     this->strArr = nullptr;
 };
 
-Console console(10);
+Console console(1000);
