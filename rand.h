@@ -13,9 +13,12 @@
 #include <chrono>
 #include <string>
 #include <cmath>
+#include <cstring>
 
 #include <SDL.h>
 #include <SDL_image.h>
+
+#include <SDL_mixer.h>
 
 // #include <SDL/SDL.h>
 // #include <SDL/SDL_image.h>

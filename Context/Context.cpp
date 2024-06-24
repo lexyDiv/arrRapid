@@ -8,7 +8,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
     bool success = true;
 
     // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
         success = false;
@@ -28,7 +28,7 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
                                          this->SCREEN_WIDTH,
                                          this->SCREEN_HEIGHT,
                                          SDL_WINDOW_OPENGL
-                                          // | SDL_WINDOW_FULLSCREEN
+                                         // | SDL_WINDOW_FULLSCREEN
         );
         if (this->gWindow == NULL)
         {
@@ -54,6 +54,11 @@ Context::Context(int SCREEN_WIDTH, int SCREEN_HEIGHT)
                 if (!(IMG_Init(imgFlags) & imgFlags))
                 {
                     printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+                    success = false;
+                }
+                if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+                {
+                    printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
                     success = false;
                 }
             }
@@ -174,7 +179,7 @@ void Context::DrawText(int x, int y, int size, string str)
 
 void Context::DrawText(int x, int y, int size, string str, int A)
 {
-        int drawX = x;
+    int drawX = x;
     for (int i = 0; i < str.size(); i++)
     {
         char litera = str[i];

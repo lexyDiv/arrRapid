@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Mouse/Mouse.cpp"
+#include "../Sound/Sound.cpp"
 
 class Cell
 {
