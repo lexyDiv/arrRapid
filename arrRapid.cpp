@@ -10,6 +10,7 @@ Mix_Chunk *gMedium = NULL;
 Mix_Chunk *gLow = NULL;
 
 Sound test("src/sound/pi.wav");
+Sound war("src/sound/intro.mp3", true);
 
 bool loadMedia()
 {
@@ -24,7 +25,7 @@ bool loadMedia()
 	//  }
 
 	// Load music
-	gMusic = Mix_LoadMUS("src/sound/beat.wav");
+	gMusic = Mix_LoadMUS("src/sound/intro.mp3");
 	if (gMusic == NULL)
 	{
 		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
@@ -125,13 +126,16 @@ int main(int argc, char *args[])
 			// 	Mix_Volume(1, MIX_MAX_VOLUME); // 128
 			// 	Mix_PlayChannel(1, gHigh, 0);
 			// }
+			
 			if (ticker == 150)
 			{
-				Mix_Volume(0, vol);  // gromkost
-				Mix_PlayChannel(0, gHigh, 0);	// play			
-	
+				Mix_Volume(-1, vol);  // gromkost
+				//Mix_PlayChannel(0, gHigh, 0);	// play			
+	             test.play();
+				 war.playM();
 				//Mix_HaltChannel(0);  // stop
 				//Mix_PauseMusic(0);  // pausa music
+				
 				
 			}
 			if (ticker == 200)
@@ -139,7 +143,7 @@ int main(int argc, char *args[])
 							
 	       // Mix_HaltChannel(0); 
 				console.log("try pausa");
-				Mix_Pause(0); //  
+				Mix_Pause(-1); //  
 				// Mix_ResumeMusic();   // anty pausa music
 			}
 			if(ticker == 300)
@@ -149,8 +153,20 @@ int main(int argc, char *args[])
              if(ticker > 300 && vol > 0)
 			 {
 				vol--;
-				Mix_Volume(0, vol);
+				Mix_Volume(-1, vol);
 			 }
+
+			 if(ticker == 400)
+			 {
+                // for(int i = 0; i < 100; i++)
+				// {
+				//	Mix_HaltChannel(-1);
+				// }
+				// Mix_HaltMusic();
+				 console.log("here");
+
+			 }
+           
 			// test.play();
 			//console.log("try sound paly");
 	//	}
