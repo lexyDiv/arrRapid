@@ -1,71 +1,68 @@
 ﻿#include "function.cpp"
 
-
-//The music that will be played
+// The music that will be played
 Mix_Music *gMusic = NULL;
 
-//The sound effects that will be used
+// The sound effects that will be used
 Mix_Chunk *gScratch = NULL;
 Mix_Chunk *gHigh = NULL;
 Mix_Chunk *gMedium = NULL;
 Mix_Chunk *gLow = NULL;
 
-
+Sound test("src/sound/pi.wav");
 
 bool loadMedia()
 {
-	//Loading success flag
+	// Loading success flag
 	bool success = true;
 
-	//Load prompt texture
-	// if( !gPromptTexture.loadFromFile( "src/sound/prompt.png" ) )
-	// {
-	// 	printf( "Failed to load prompt texture!\n" );
-	// 	success = false;
-	// }
+	// Load prompt texture
+	//  if( !gPromptTexture.loadFromFile( "src/sound/prompt.png" ) )
+	//  {
+	//  	printf( "Failed to load prompt texture!\n" );
+	//  	success = false;
+	//  }
 
-	//Load music
-	gMusic = Mix_LoadMUS( "src/sound/beat.wav" );
-	if( gMusic == NULL )
+	// Load music
+	gMusic = Mix_LoadMUS("src/sound/beat.wav");
+	if (gMusic == NULL)
 	{
-		printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
-		success = false;
-	}
-	
-	//Load sound effects
-	gScratch = Mix_LoadWAV( "src/sound/scratch.wav" );
-	if( gScratch == NULL )
-	{
-		printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
-		success = false;
-	}
-	
-	gHigh = Mix_LoadWAV( "src/sound/high.wav" );
-	if( gHigh == NULL )
-	{
-		printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
 		success = false;
 	}
 
-	gMedium = Mix_LoadWAV( "src/sound/medium.wav" );
-	if( gMedium == NULL )
+	// Load sound effects
+	gScratch = Mix_LoadWAV("src/sound/scratch.wav");
+	if (gScratch == NULL)
 	{
-		printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+		printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+		success = false;
+	}
+	string str = "src/sound/pi.wav";
+	const char *file = str.c_str();
+	gHigh = Mix_LoadWAV(file);
+	if (gHigh == NULL)
+	{
+		printf("Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError());
 		success = false;
 	}
 
-	gLow = Mix_LoadWAV( "src/sound/low.wav" );
-	if( gLow == NULL )
+	gMedium = Mix_LoadWAV("src/sound/medium.wav");
+	if (gMedium == NULL)
 	{
-		printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+		printf("Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+		success = false;
+	}
+
+	gLow = Mix_LoadWAV("src/sound/low.wav");
+	if (gLow == NULL)
+	{
+		printf("Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError());
 		success = false;
 	}
 
 	return success;
 }
-
-
-
 
 int main(int argc, char *args[])
 {
@@ -80,8 +77,10 @@ int main(int argc, char *args[])
 	bool quit = false;
 	SDL_Event e;
 
-	
 	int ticker = 0;
+	int channals = Mix_AllocateChannels(100);
+	console.log(to_string(channals));
+	int vol = 128;
 	while (!quit)
 	{
 		// Handle events on queue
@@ -113,19 +112,48 @@ int main(int argc, char *args[])
 			}
 			if (e.type == SDL_MOUSEWHEEL)
 			{
-			
-			  console.whellOrder(e.motion.yrel);
+
+				console.whellOrder(e.motion.yrel);
 			}
 		}
 		console.proc(mouse.x, mouse.y, mouse.leftKey);
 
-
-if(ticker == 100)
-{
-	Mix_PlayChannel( -1, gHigh, 0 );
-	console.log("try sound paly");
-}
-
+		// if (ticker == 100 || ticker == 150)
+		// {
+			// if (ticker == 100)
+			// {
+			// 	Mix_Volume(1, MIX_MAX_VOLUME); // 128
+			// 	Mix_PlayChannel(1, gHigh, 0);
+			// }
+			if (ticker == 150)
+			{
+				Mix_Volume(0, vol);  // gromkost
+				Mix_PlayChannel(0, gHigh, 0);	// play			
+	
+				//Mix_HaltChannel(0);  // stop
+				//Mix_PauseMusic(0);  // pausa music
+				
+			}
+			if (ticker == 200)
+			{
+							
+	       // Mix_HaltChannel(0); 
+				console.log("try pausa");
+				Mix_Pause(0); //  
+				// Mix_ResumeMusic();   // anty pausa music
+			}
+			if(ticker == 300)
+			{
+				Mix_Resume(0);
+			}
+             if(ticker > 300 && vol > 0)
+			 {
+				vol--;
+				Mix_Volume(0, vol);
+			 }
+			// test.play();
+			//console.log("try sound paly");
+	//	}
 
 		ctx.ClearRect(0, 0, 800, 600);
 
@@ -164,13 +192,11 @@ if(ticker == 100)
 		ctx.End();
 
 		ticker++;
-
 	}
 	ctx.Close();
 
 	delete image;
 	image = nullptr;
-
 
 	arr->forEach([](rapid<Cell *> *line)
 				 {
@@ -185,21 +211,19 @@ if(ticker == 100)
 	// delete test;
 	// test = nullptr;
 
-
-	//Free the sound effects
-	Mix_FreeChunk( gScratch );
-	Mix_FreeChunk( gHigh );
-	Mix_FreeChunk( gMedium );
-	Mix_FreeChunk( gLow );
+	// Free the sound effects
+	Mix_FreeChunk(gScratch);
+	Mix_FreeChunk(gHigh);
+	Mix_FreeChunk(gMedium);
+	Mix_FreeChunk(gLow);
 	gScratch = NULL;
 	gHigh = NULL;
 	gMedium = NULL;
 	gLow = NULL;
-	
-	//Free the music
-	Mix_FreeMusic( gMusic );
-	gMusic = NULL;
 
+	// Free the music
+	Mix_FreeMusic(gMusic);
+	gMusic = NULL;
 
 	return 0;
 }

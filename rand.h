@@ -13,6 +13,7 @@
 #include <chrono>
 #include <string>
 #include <cmath>
+#include <cstring>
 
 #include <SDL.h>
 #include <SDL_image.h>
